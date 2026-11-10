@@ -1,0 +1,1516 @@
+{
+  "intent_field": "i",
+  "intent_max": 200,
+  "compaction": {
+    "headings": [
+      "Goal",
+      "Constraints & Preferences",
+      "Progress",
+      "Key Decisions",
+      "Critical Context",
+      "Next Steps"
+    ],
+    "min_headings": 4
+  },
+  "reports": [
+    {
+      "stream_prefix": "F428Falsify",
+      "detect": "\\*\\*Experiment",
+      "require": [
+        {
+          "name": "**Experiment:** line",
+          "any": [
+            "\\*\\*Experiment[^\\n]*:\\*\\*"
+          ]
+        },
+        {
+          "name": "GO / NO-GO verdict",
+          "any": [
+            "\\bGO\\b"
+          ]
+        },
+        {
+          "name": "NO-GO class",
+          "any": [
+            "(?<!NO-)\\bGO\\b",
+            "NO-GO class:?\\*{0,2}:?\\s*[`\"'*]*\\w+"
+          ]
+        }
+      ]
+    }
+  ],
+  "accepted": {
+    "main/0/turn/0": [
+      "look"
+    ],
+    "main/0/turn/1": [
+      "look"
+    ],
+    "main/0/turn/2": [
+      "look"
+    ],
+    "main/0/turn/3": [
+      "look"
+    ],
+    "main/0/turn/4": [
+      "look"
+    ],
+    "main/0/turn/5": [
+      "look"
+    ],
+    "main/0/turn/6": [
+      "look"
+    ],
+    "main/0/turn/7": [
+      "look"
+    ],
+    "main/0/turn/8": [
+      "look"
+    ],
+    "main/0/turn/9": [
+      "look"
+    ],
+    "main/0/turn/10": [
+      "look"
+    ],
+    "main/0/turn/11": [
+      "look"
+    ],
+    "main/0/turn/12": [
+      "look"
+    ],
+    "main/0/turn/13": [
+      "look"
+    ],
+    "main/0/turn/14": [
+      "look"
+    ],
+    "main/0/turn/15": [
+      "look"
+    ],
+    "main/0/turn/16": [
+      "look"
+    ],
+    "main/0/turn/17": [
+      "look"
+    ],
+    "main/0/turn/18": [
+      "look"
+    ],
+    "main/0/turn/19": [
+      "look"
+    ],
+    "main/0/turn/20": [
+      "look"
+    ],
+    "main/0/turn/21": [
+      "look"
+    ],
+    "main/0/turn/22": [
+      "look"
+    ],
+    "main/0/turn/23": [
+      "look"
+    ],
+    "main/0/turn/24": [
+      "look"
+    ],
+    "main/0/turn/25": [
+      "look"
+    ],
+    "main/0/turn/26": [
+      "look"
+    ],
+    "main/0/turn/27": [
+      "look"
+    ],
+    "main/0/turn/28": [
+      "look"
+    ],
+    "main/0/turn/29": [
+      "look"
+    ],
+    "main/0/turn/30": [
+      "look"
+    ],
+    "main/0/turn/31": [
+      "look"
+    ],
+    "main/0/turn/32": [
+      "look"
+    ],
+    "main/0/turn/33": [
+      "look"
+    ],
+    "main/0/turn/34": [
+      "look"
+    ],
+    "main/0/turn/35": [
+      "look"
+    ],
+    "main/0/turn/36": [
+      "look"
+    ],
+    "main/0/turn/37": [
+      "look"
+    ],
+    "main/0/turn/38": [
+      "look",
+      "wait"
+    ],
+    "main/0/turn/39": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/40": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/41": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/42": [
+      "change"
+    ],
+    "main/0/turn/43": [
+      "change"
+    ],
+    "main/0/turn/44": [
+      "change"
+    ],
+    "main/0/turn/45": [
+      "change"
+    ],
+    "main/0/turn/46": [
+      "change"
+    ],
+    "main/0/turn/47": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/48": [
+      "change"
+    ],
+    "main/0/turn/49": [
+      "change"
+    ],
+    "main/0/turn/50": [
+      "change"
+    ],
+    "main/0/turn/51": [
+      "change"
+    ],
+    "main/0/turn/52": [
+      "change"
+    ],
+    "main/0/turn/53": [
+      "change"
+    ],
+    "main/0/turn/54": [
+      "change"
+    ],
+    "main/0/turn/55": [
+      "change"
+    ],
+    "main/0/turn/56": [
+      "look"
+    ],
+    "main/0/turn/57": [
+      "change"
+    ],
+    "main/0/turn/58": [
+      "change"
+    ],
+    "main/0/turn/59": [
+      "change"
+    ],
+    "main/0/turn/60": [
+      "change"
+    ],
+    "main/0/turn/61": [
+      "look"
+    ],
+    "main/0/turn/62": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/63": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/64": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/65": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/66": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/67": [
+      "look"
+    ],
+    "main/0/turn/68": [
+      "change"
+    ],
+    "main/0/turn/69": [
+      "look"
+    ],
+    "main/0/turn/70": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/71": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/72": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/73": [
+      "change"
+    ],
+    "main/0/turn/74": [
+      "look"
+    ],
+    "main/0/turn/75": [
+      "change"
+    ],
+    "main/0/turn/76": [
+      "change"
+    ],
+    "main/0/turn/77": [
+      "change"
+    ],
+    "main/0/turn/78": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/79": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/80": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/81": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/82": [
+      "change"
+    ],
+    "main/0/turn/83": [
+      "change"
+    ],
+    "main/0/turn/84": [
+      "change"
+    ],
+    "main/0/turn/85": [
+      "change"
+    ],
+    "main/0/turn/86": [
+      "change"
+    ],
+    "main/0/turn/87": [
+      "change"
+    ],
+    "main/0/turn/88": [
+      "look"
+    ],
+    "main/0/turn/89": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/90": [
+      "change"
+    ],
+    "main/0/turn/91": [
+      "change"
+    ],
+    "main/0/turn/92": [
+      "look"
+    ],
+    "main/0/turn/93": [
+      "change"
+    ],
+    "main/0/turn/94": [
+      "look"
+    ],
+    "main/0/turn/95": [
+      "look"
+    ],
+    "main/0/turn/96": [
+      "change"
+    ],
+    "main/0/turn/97": [
+      "look"
+    ],
+    "main/0/turn/98": [
+      "look"
+    ],
+    "main/0/turn/99": [
+      "look"
+    ],
+    "main/0/turn/100": [
+      "look"
+    ],
+    "main/0/turn/101": [
+      "look"
+    ],
+    "main/0/turn/102": [
+      "look"
+    ],
+    "main/0/turn/103": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/104": [
+      "look"
+    ],
+    "main/0/turn/105": [
+      "look"
+    ],
+    "main/0/turn/106": [
+      "look"
+    ],
+    "main/0/turn/107": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/108": [
+      "change"
+    ],
+    "main/0/turn/109": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/110": [
+      "change"
+    ],
+    "main/0/turn/111": [
+      "change"
+    ],
+    "main/0/turn/112": [
+      "look"
+    ],
+    "main/0/turn/113": [
+      "look"
+    ],
+    "main/0/turn/114": [
+      "look"
+    ],
+    "main/0/turn/115": [
+      "look"
+    ],
+    "main/0/turn/116": [
+      "change"
+    ],
+    "main/0/turn/117": [
+      "look"
+    ],
+    "main/0/turn/118": [
+      "change"
+    ],
+    "main/0/turn/119": [
+      "change"
+    ],
+    "main/0/turn/120": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/121": [
+      "look"
+    ],
+    "main/0/turn/122": [
+      "change"
+    ],
+    "main/0/turn/123": [
+      "look"
+    ],
+    "main/0/turn/124": [
+      "look"
+    ],
+    "main/0/turn/125": [
+      "change"
+    ],
+    "main/0/turn/126": [
+      "change"
+    ],
+    "main/0/turn/127": [
+      "change"
+    ],
+    "main/0/turn/128": [
+      "change"
+    ],
+    "main/0/turn/129": [
+      "look"
+    ],
+    "main/0/turn/130": [
+      "look"
+    ],
+    "main/0/turn/131": [
+      "change"
+    ],
+    "main/0/turn/132": [
+      "look"
+    ],
+    "main/0/turn/133": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/134": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/135": [
+      "look"
+    ],
+    "main/0/turn/136": [
+      "look"
+    ],
+    "main/0/turn/137": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/138": [
+      "change"
+    ],
+    "main/0/turn/139": [
+      "change"
+    ],
+    "main/0/turn/140": [
+      "look"
+    ],
+    "main/0/turn/141": [
+      "change"
+    ],
+    "main/0/turn/142": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/143": [
+      "change"
+    ],
+    "main/0/turn/144": [
+      "look"
+    ],
+    "main/0/turn/145": [
+      "change",
+      "look"
+    ],
+    "main/0/turn/146": [
+      "change"
+    ],
+    "main/0/turn/147": [
+      "change"
+    ],
+    "main/0/turn/148": [
+      "look"
+    ],
+    "main/0/turn/149": [
+      "change"
+    ],
+    "main/0/turn/150": [
+      "look"
+    ],
+    "main/0/turn/151": [
+      "look"
+    ],
+    "main/0/turn/152": [
+      "change"
+    ],
+    "main/0/turn/153": [
+      "look"
+    ],
+    "main/0/turn/154": [
+      "change"
+    ],
+    "main/0/turn/155": [
+      "change"
+    ],
+    "main/1/turn/156": [
+      "look"
+    ],
+    "main/1/turn/157": [
+      "change"
+    ],
+    "main/1/turn/158": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/159": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/160": [
+      "look"
+    ],
+    "main/1/turn/161": [
+      "look"
+    ],
+    "main/1/turn/162": [
+      "change"
+    ],
+    "main/1/turn/163": [
+      "look"
+    ],
+    "main/1/turn/164": [
+      "look"
+    ],
+    "main/1/turn/165": [
+      "look"
+    ],
+    "main/1/turn/166": [
+      "look"
+    ],
+    "main/1/turn/167": [
+      "look"
+    ],
+    "main/1/turn/168": [
+      "look"
+    ],
+    "main/1/turn/169": [
+      "look"
+    ],
+    "main/1/turn/170": [
+      "look"
+    ],
+    "main/1/turn/171": [
+      "look"
+    ],
+    "main/1/turn/172": [
+      "look"
+    ],
+    "main/1/turn/173": [
+      "look"
+    ],
+    "main/1/turn/174": [
+      "look"
+    ],
+    "main/1/turn/175": [
+      "look"
+    ],
+    "main/1/turn/176": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/177": [
+      "change"
+    ],
+    "main/1/turn/178": [
+      "look"
+    ],
+    "main/1/turn/179": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/180": [
+      "look"
+    ],
+    "main/1/turn/181": [
+      "look"
+    ],
+    "main/1/turn/182": [
+      "look"
+    ],
+    "main/1/turn/183": [
+      "look"
+    ],
+    "main/1/turn/184": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/185": [
+      "change"
+    ],
+    "main/1/turn/186": [
+      "look"
+    ],
+    "main/1/turn/187": [
+      "look"
+    ],
+    "main/1/turn/188": [
+      "look"
+    ],
+    "main/1/turn/189": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/190": [
+      "look"
+    ],
+    "main/1/turn/191": [
+      "look"
+    ],
+    "main/1/turn/192": [
+      "<text>",
+      "wait"
+    ],
+    "main/1/turn/193": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/194": [
+      "change"
+    ],
+    "main/1/turn/195": [
+      "look"
+    ],
+    "main/1/turn/196": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/197": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/198": [
+      "change"
+    ],
+    "main/1/turn/199": [
+      "change"
+    ],
+    "main/1/turn/200": [
+      "change"
+    ],
+    "main/1/turn/201": [
+      "change"
+    ],
+    "main/1/turn/202": [
+      "change"
+    ],
+    "main/1/turn/203": [
+      "change"
+    ],
+    "main/1/turn/204": [
+      "delegate"
+    ],
+    "main/1/turn/205": [
+      "<text>"
+    ],
+    "F428FalsifyP1213/0/turn/0": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/1": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/2": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/3": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/4": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/5": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/6": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/7": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/8": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/9": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/10": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/11": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/12": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/13": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/14": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/15": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/16": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/17": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/18": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/19": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/20": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/21": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/22": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/23": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/24": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/25": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/26": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/27": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/28": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/29": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/30": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/31": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/32": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/33": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/34": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/35": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/36": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/37": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/38": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/39": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/40": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/41": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/42": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/43": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/44": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/45": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/46": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/47": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/48": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/49": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/50": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/51": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/52": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/53": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/54": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/55": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/56": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/57": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/58": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/59": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/60": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/61": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/62": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/63": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/64": [
+      "change"
+    ],
+    "F428FalsifyP1213/0/turn/65": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/66": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/67": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/68": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/69": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/70": [
+      "look"
+    ],
+    "F428FalsifyP1213/0/turn/71": [
+      "<text>"
+    ],
+    "main/1/turn/206": [
+      "look"
+    ],
+    "main/1/turn/207": [
+      "look"
+    ],
+    "main/1/turn/208": [
+      "look"
+    ],
+    "main/1/turn/209": [
+      "change"
+    ],
+    "main/1/turn/210": [
+      "change"
+    ],
+    "main/1/turn/211": [
+      "change"
+    ],
+    "main/1/turn/212": [
+      "change"
+    ],
+    "main/1/turn/213": [
+      "change"
+    ],
+    "main/1/turn/214": [
+      "change"
+    ],
+    "main/1/turn/215": [
+      "change"
+    ],
+    "main/1/turn/216": [
+      "look"
+    ],
+    "main/1/turn/217": [
+      "look"
+    ],
+    "main/1/turn/218": [
+      "look"
+    ],
+    "main/1/turn/219": [
+      "look"
+    ],
+    "main/1/turn/220": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/221": [
+      "look"
+    ],
+    "main/1/turn/222": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/223": [
+      "look"
+    ],
+    "main/1/turn/224": [
+      "change"
+    ],
+    "main/1/turn/225": [
+      "look"
+    ],
+    "main/1/turn/226": [
+      "change"
+    ],
+    "main/1/turn/227": [
+      "look"
+    ],
+    "main/1/turn/228": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/229": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/230": [
+      "look"
+    ],
+    "main/1/turn/231": [
+      "change"
+    ],
+    "main/1/turn/232": [
+      "look"
+    ],
+    "main/1/turn/233": [
+      "change"
+    ],
+    "main/1/turn/234": [
+      "look"
+    ],
+    "main/1/turn/235": [
+      "look"
+    ],
+    "main/1/turn/236": [
+      "look"
+    ],
+    "main/1/turn/237": [
+      "look"
+    ],
+    "main/1/turn/238": [
+      "look"
+    ],
+    "main/1/turn/239": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/240": [
+      "change"
+    ],
+    "main/1/turn/241": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/242": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/243": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/244": [
+      "look"
+    ],
+    "main/1/turn/245": [
+      "change"
+    ],
+    "main/1/turn/246": [
+      "change"
+    ],
+    "main/1/turn/247": [
+      "change"
+    ],
+    "main/1/turn/248": [
+      "look"
+    ],
+    "main/1/turn/249": [
+      "<text>"
+    ],
+    "main/1/turn/250": [
+      "<text>"
+    ],
+    "main/1/turn/251": [
+      "change"
+    ],
+    "main/1/turn/252": [
+      "change"
+    ],
+    "main/1/turn/253": [
+      "change"
+    ],
+    "main/1/turn/254": [
+      "change"
+    ],
+    "main/1/turn/255": [
+      "delegate"
+    ],
+    "main/1/turn/256": [
+      "<text>"
+    ],
+    "F428FalsifyP1213R2/0/turn/0": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/1": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/2": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/3": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/4": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/5": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/6": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/7": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/8": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/9": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/10": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/11": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/12": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/13": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/14": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/15": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/16": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/17": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/18": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/19": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/20": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/21": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/22": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/23": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/24": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/25": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/26": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/27": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/28": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/29": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/30": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/31": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/32": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/33": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/34": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/35": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/36": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/37": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/38": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/39": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/40": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/41": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/42": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/43": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/44": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/45": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/46": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/47": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/48": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/49": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/50": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/51": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/52": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/53": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/54": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/55": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/56": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/57": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/58": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/59": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/60": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/61": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/62": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/63": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/64": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/65": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/66": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/67": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/68": [
+      "change",
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/69": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/70": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/71": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/72": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/73": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/74": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/75": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/76": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/77": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/78": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/79": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/80": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/81": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/82": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/83": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/84": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/85": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/86": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/87": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/88": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/89": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/90": [
+      "<text>"
+    ],
+    "main/1/turn/257": [
+      "look"
+    ],
+    "main/1/turn/258": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/259": [
+      "look"
+    ],
+    "main/1/turn/260": [
+      "change"
+    ],
+    "main/1/turn/261": [
+      "look"
+    ],
+    "main/1/turn/262": [
+      "change"
+    ],
+    "main/1/turn/263": [
+      "change"
+    ],
+    "main/1/turn/264": [
+      "look"
+    ],
+    "main/1/turn/265": [
+      "change"
+    ],
+    "main/1/turn/266": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/267": [
+      "change"
+    ],
+    "main/1/turn/268": [
+      "look"
+    ],
+    "main/1/turn/269": [
+      "look"
+    ],
+    "main/1/turn/270": [
+      "change"
+    ],
+    "main/1/turn/271": [
+      "change"
+    ],
+    "main/1/turn/272": [
+      "change"
+    ],
+    "main/1/turn/273": [
+      "<text>"
+    ],
+    "F428FalsifyP1213R2/0/turn/91": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/92": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/93": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/94": [
+      "look"
+    ],
+    "F428FalsifyP1213R2/0/turn/95": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/96": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/97": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/98": [
+      "change"
+    ],
+    "F428FalsifyP1213R2/0/turn/99": [
+      "<text>"
+    ],
+    "main/1/turn/274": [
+      "change"
+    ],
+    "main/1/turn/275": [
+      "change"
+    ],
+    "main/1/turn/276": [
+      "change"
+    ],
+    "main/1/turn/277": [
+      "change"
+    ],
+    "main/1/turn/278": [
+      "look"
+    ],
+    "main/1/turn/279": [
+      "<text>"
+    ],
+    "main/1/turn/280": [
+      "look"
+    ],
+    "main/1/turn/281": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/282": [
+      "change"
+    ],
+    "main/1/turn/283": [
+      "change"
+    ],
+    "main/1/turn/284": [
+      "look"
+    ],
+    "main/1/turn/285": [
+      "change"
+    ],
+    "main/1/turn/286": [
+      "change"
+    ],
+    "main/1/turn/287": [
+      "change"
+    ],
+    "main/1/turn/288": [
+      "change"
+    ],
+    "main/1/turn/289": [
+      "change"
+    ],
+    "main/1/turn/290": [
+      "look"
+    ],
+    "main/1/turn/291": [
+      "change",
+      "look"
+    ],
+    "main/1/turn/292": [
+      "change"
+    ],
+    "main/1/turn/293": [
+      "look"
+    ],
+    "main/1/turn/294": [
+      "<text>"
+    ],
+    "main/1/turn/295": [
+      "look"
+    ],
+    "main/1/turn/296": [
+      "<text>",
+      "look"
+    ]
+  },
+  "accepted_refs": [
+    "unsloth/Qwen3.8-27B-GGUF:Q8_0 · MTP (llamacpp-b12117_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_coding-large_t0.6_20261108-161443.jsonl, 2026-11-09)",
+    "unsloth/Qwen3.8-27B-GGUF:Q8_0 · DFlash2 (llamacpp-b12117_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_coding-large_t0.6_20261108-175742.jsonl, 2026-11-09)",
+    "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (splash-1.6.0-m1_ISTA-DASLab-Qwen3.8-Flash-Next-GSQ-RCO-GGUF_conv-3_t0.6_20261107-092734.jsonl, 2026-11-07)",
+    "mlx-community/Qwen3.8-27B-4bit (splash-1.6.0-m1_MBP-M2Max-64GB_mlx-community-Qwen3.8-27B-4bit_coding-full_t0.6_20261107-212525.jsonl, 2026-11-08)",
+    "unsloth/Qwen3.8-27B-GGUF:Q8_0 (splash-1.6.0-m1_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_conv-3_t0.6_20261107-125422.jsonl, 2026-11-07)",
+    "unsloth/Qwen3.8-Flash-Next-GGUF:UD-IQ1_S (splash-1.6.0-m1_MBP-M2Max-64GB_unsloth-Qwen3.8-Flash-Next-GGUF-UD-IQ1_S_conv-3_t0.6_20261107-122645.jsonl, 2026-11-07)"
+  ],
+  "fixture_sha256": "cc94c0968da96bcbe54f496bd2ffa3bc8954b12ebce08bf4d3dc32d1b8dd5905"
+}

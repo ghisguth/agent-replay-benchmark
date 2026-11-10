@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+# run outputs
+reports/
+states/
+logs/
+# raw inputs (omp sessions, proxy dumps, server logs): never committed
+sources/
+/captures/
+build/
+*.egg-info/

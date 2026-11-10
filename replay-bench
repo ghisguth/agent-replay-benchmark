@@ -1,0 +1,28 @@
+#!/bin/sh
+# Launcher for replay_bench.py: finds the checkout (following symlinks, so it can be linked onto PATH) and a Python 3.9+
+# (the checkout's .venv first, then python3, python3.13, python3.12, ...), then runs the benchmark with the arguments given.
+src=$0
+while [ -h "$src" ]; do
+    dir=$(cd -P "$(dirname "$src")" && pwd)
+    src=$(readlink "$src")
+    case $src in /*) ;; *) src=$dir/$src ;; esac
+done
+ROOT=$(cd -P "$(dirname "$src")" && pwd)
+
+python=
+for candidate in "$ROOT/.venv/bin/python" python3 python3.13 python3.12 python3.11 python3.10 python3.9; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+        "$candidate" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)' >/dev/null 2>&1; then
+        python=$candidate
+        break
+    fi
+done
+
+if [ -z "$python" ]; then
+    echo "replay-bench: Python 3.9 or newer not found." >&2
+    echo "Install it (macOS: brew install python; Debian/Ubuntu: sudo apt install python3; Fedora: sudo dnf install python3)," >&2
+    echo "or run 'make bootstrap' in $ROOT to create a .venv there." >&2
+    exit 1
+fi
+
+exec "$python" -u "$ROOT/replay_bench.py" "$@"

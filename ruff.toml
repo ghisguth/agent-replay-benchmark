@@ -1,0 +1,36 @@
+# Configuration for ruff linter.
+target-version = "py39"
+line-length = 120
+
+[lint]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # Pyflakes
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "B",  # flake8-bugbear
+]
+
+ignore = [
+    # E501: Line length > 120. Prompts, regexes, test fixtures, and table formatting strings
+    # intentionally exceed 120 characters to preserve exact whitespace and content without artificial wrapping.
+    "E501",
+
+    # E731: Do not assign a lambda expression, use a def. The codebase uses compact lambda
+    # assignments (e.g. d = lambda k, better: delta_cell(...), ms = lambda r, k: r.get(k) or 0)
+    # for local formatting and metrics accessors.
+    "E731",
+
+    # E741: Ambiguous variable name. In box-drawing tables and formatting, single-letter variables
+    # like l (left), m (middle), and r (right) are standard parameters (e.g. _rule(w, l, m, r)).
+    "E741",
+
+    # B023: Function definition does not bind loop variable. Closures and lambdas defined inside loops
+    # (e.g. query_with_retry in runner.py, scopes in compare.py) are invoked synchronously within
+    # the same iteration, not deferred or stored.
+    "B023",
+
+    # B904: Within an except clause, raise exceptions with from. In CLI and test code, raising
+    # UserError or ValueError directly keeps output clean without chaining redundant traceback contexts.
+    "B904",
+]

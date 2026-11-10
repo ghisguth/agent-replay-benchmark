@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-replay-benchmark"
+version = "0.1.0"
+description = "Replay a real coding-agent session turn by turn against OpenAI-compatible servers and compare models, quants and servers"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Alexander Fedora"}]
+keywords = ["llm", "benchmark", "coding-agent", "replay", "openai-compatible", "llama.cpp", "mlx", "quantization"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/ghisguth/agent-replay-benchmark"
+Repository = "https://github.com/ghisguth/agent-replay-benchmark"
+Issues = "https://github.com/ghisguth/agent-replay-benchmark/issues"
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[project.scripts]
+replay-bench = "replay_bench:main"
+
+[tool.setuptools]
+py-modules = ["replay_bench"]
+# The repository keeps fixtures/ at its root; it installs as the data-only package bench.fixtures (bench/paths.py)
+packages = ["bench", "bench.cases", "bench.fixtures", "bench.fixtures.refs", "bench.fixtures.samples"]
+
+[tool.setuptools.package-dir]
+"bench.fixtures" = "fixtures"
+"bench.fixtures.refs" = "fixtures/refs"
+"bench.fixtures.samples" = "fixtures/samples"
+
+[tool.setuptools.package-data]
+"bench.fixtures" = ["*.json.gz", "*.checks.json"]
+"bench.fixtures.refs" = ["*.jsonl"]
+"bench.fixtures.samples" = ["*.jsonl"]

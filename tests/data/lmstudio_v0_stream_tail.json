@@ -1,0 +1,20 @@
+{
+  "id": "chatcmpl-mock",
+  "object": "chat.completion.chunk",
+  "created": 1794277626,
+  "model": "qwen3.8-27b-mlx",
+  "choices": [],
+  "usage": {
+    "prompt_tokens": 59,
+    "completion_tokens": 40,
+    "total_tokens": 99,
+    "completion_tokens_details": {
+      "reasoning_tokens": 40
+    }
+  },
+  "stats": {
+    "total_draft_tokens_count": 49,
+    "accepted_draft_tokens_count": 21,
+    "rejected_draft_tokens_count": 28
+  }
+}

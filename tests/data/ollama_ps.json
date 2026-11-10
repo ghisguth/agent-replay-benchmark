@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "name": "qwen3.8:27b-256k",
+      "model": "qwen3.8:27b-256k",
+      "size": 26123268259,
+      "digest": "4010bd202712ea6bee89a163733011c461085c2bd1154caa2a49bcabb7c5eaa6",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen35",
+        "families": [
+          "qwen35"
+        ],
+        "parameter_size": "27.3B",
+        "quantization_level": "Q4_K_M"
+      },
+      "expires_at": "2026-11-09T11:43:08.938437-08:00",
+      "size_vram": 26123268259,
+      "context_length": 262144,
+      "runner": "llamacpp"
+    }
+  ]
+}

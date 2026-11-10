@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "qwen3.8-27b-mlx",
+      "object": "model",
+      "type": "llm",
+      "publisher": "mlx-community",
+      "arch": "qwen3_5",
+      "compatibility_type": "mlx",
+      "quantization": "4bit",
+      "state": "loaded",
+      "max_context_length": 262144,
+      "loaded_context_length": 262144
+    }
+  ]
+}

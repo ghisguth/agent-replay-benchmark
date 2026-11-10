@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # Official Python images instead of actions/setup-python: the runner image has no 3.9 build any more, and 3.9 is
+    # the oldest version pyproject.toml supports.
+    container: python:${{ matrix.python-version }}-slim
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ruff
+        run: pip install ruff
+      - name: Lint
+        run: ruff check replay_bench.py bench tools tests
+      - name: Unit tests
+        run: python -m unittest discover -s tests
+      - name: Integration tests (mock server on 127.0.0.1)
+        run: python -m unittest discover -s tests/integration
+      - name: Install and dry run
+        run: |
+          pip install .
+          cd /tmp
+          replay-bench --dry-run --preset quickstart
