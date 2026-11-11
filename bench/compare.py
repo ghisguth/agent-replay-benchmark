@@ -13,6 +13,7 @@ import sys
 
 from . import backend, perf, report
 from . import fmt as F
+from . import reference as ref
 from . import results as R
 from .report import Cell, Note, Table
 from .state import _decoded as decoded_name
@@ -245,7 +246,7 @@ def _extra_rows(s):
     return [(label, F.num(n)) for label, n in (("Skipped", s["skip"]), ("Telemetry drops", drops)) if n]
 
 
-def client_table(s, b, name, base_name, shares=None):
+def client_table(s, b, name, base_name, shares=None, ref_rows=None):
     """Per-run vertical metrics view, against the baseline's numbers when there is one. `shares`: rows for the verdicts and
     the agreement shares of both runs, [(label, baseline cell, this cell, change)], shown with a baseline."""
     extra = _extra_rows(s)
@@ -257,7 +258,9 @@ def client_table(s, b, name, base_name, shares=None):
         head = R.clip(base_name, 32) if base_name else "Baseline"
         return [Table(["Metric", head, name, "\u0394"], rows, aligns=["l", "r", "r", "r"]),
                 Note("Baseline: %s." % base_name)]
-    rows = [[_label_cell(label), client_cell(s, key, f)] for label, key, f, _ in _client_rows(s)] + [[l, v] for l, v in extra]
+    rows = [[_label_cell(label), client_cell(s, key, f)] for label, key, f, _ in _client_rows(s)]
+    rows[1:1] = [[_label_cell(label), v] for label, _, v, _ in ref_rows or []]
+    rows += [[l, v] for l, v in extra]
     return [Table(["Metric", "Value"], rows, aligns=["l", "r"])]
 
 
@@ -272,6 +275,23 @@ def share_rows(this_results, base_results):
     for label, f in (("Same tools as recorded %", R.tools_agreement), ("In line %", il)):
         b, t = f(base_results), f(this_results)
         rows.append((label, F.pct(b), F.pct(t), Cell(F.signed_pt(t, b), "dim") if None not in (b, t) else ""))
+    return rows
+
+
+def reference_rows(this_results, base_results=None):
+    """The Metrics rows of the agreement with the --reference run, [(label, baseline cell, this cell, change)]; empty when
+    the results were not judged against one."""
+    t = ref.stats(this_results)
+    if t is None:
+        return []
+    b = ref.stats(base_results) if base_results else None
+    rows = []
+    for label, key, kind in ref.ROWS:
+        bv = b[key] if b else None
+        rows.append((label, ref.value_text(bv, kind) if b else "", ref.value_text(t[key], kind),
+                     Cell(ref.delta_text(t[key], bv, kind), "dim") if b else ""))
+    for label, key in ref.BY_TOOL_ROWS:
+        rows.append((label, ref.by_tool_text(b[key]) if b else "", ref.by_tool_text(t[key]), ""))
     return rows
 
 
@@ -304,6 +324,9 @@ def run_blocks(e, comparison=None, cases=None, anomalies=None, titles=True, inte
     if titles:
         out += ["## " + decoded_name(e["name"], e.get("model_info")), "### Results"]
     out.append(R.counts_line(R.verdict_counts(all_res), R.tools_agreement(all_res), R.in_line_share(all_res)))
+    ref_stats = ref.stats(all_res)
+    if ref_stats:
+        out.append(report.Line(ref.line(ref_stats)))
     if interrupted:
         out.append(R.interrupted_line(interrupted, len(all_res)))
     if cases is not None:
@@ -328,7 +351,8 @@ def run_blocks(e, comparison=None, cases=None, anomalies=None, titles=True, inte
         b = None
     base_label = comparison.base["label"] if b else None
     out += ["### Metrics"] + client_table(s, b, "This run" if b else e["label"], base_label,
-                                          share_rows(res, bres) if b else None)
+                                          (share_rows(res, bres) + reference_rows(res, bres)) if b else None,
+                                          reference_rows(res))
     if s["paused_note"]:
         out.append(Note(s["paused_note"]))
     changes = R.verdict_changes(res, bres) if bres else []

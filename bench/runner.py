@@ -12,6 +12,7 @@ from types import SimpleNamespace
 
 from . import backend, perf, report
 from . import fmt as F
+from . import reference as reference_mod
 from . import results as R
 from . import state as state_mod
 from .baseline import check_baseline, load_baseline
@@ -266,6 +267,7 @@ def _open_state(ctx, tr):
     hdr = state_mod.make_header(
         ctx.mode, target, request=ctx.request_settings, fixture_path=ctx.replay["fixture"] if ctx.replay else None,
         argv=ctx.cmdline, selection=ctx.selection, preset=ctx.preset, note=ctx.run_note,
+        reference=ctx.reference.info() if ctx.reference else None,
         started_at=ctx.run_started.astimezone(timezone.utc).isoformat(timespec="seconds"))
     target["suite"] = ctx.mode
     target["header"] = hdr
@@ -331,7 +333,11 @@ def _run_target(ctx, tr):
         ctx.state_paths.append(tr.path)
     tr.base_run = ctx.baseline.run_for(target, ctx.infos[key]) if ctx.baseline else None
     if tr.base_run:
+        if ctx.reference:  # the baseline is judged against the reference too
+            bh = tr.base_run.header
+            tr.base_run.results = ctx.reference.judge_all(tr.base_run.results, bh.get("backend"), bh.get("model"))
         ctx.base_runs[key] = tr.base_run
+    ref_run = ctx.reference.run_for(target["backend"], target["name"]) if ctx.reference else None
     if not deferred:
         out.target_start(target, tr.has_stats, ctx.test_cases, tr.base_run)
         tr.started = True
@@ -370,7 +376,9 @@ def _run_target(ctx, tr):
             results.clear()
             results.update(done)
         if tr.writer:
-            tr.writer.write(state_mod.result_record(metrics))
+            tr.writer.write(state_mod.result_record(metrics))  # the normal verdict is stored: a reference is a view
+        if ref_run:
+            metrics.update(reference_mod.judge(metrics, ref_run.results.get(tc["id"]), ctx.reference.match, ref_run.label))
         prog["done"], prog["t_last"] = len(results), time.time()
         note_finished(tc, metrics, hist)
         if metrics.get("prompt_tokens"):
@@ -425,12 +433,13 @@ def run_benchmark(mode, target_test_ids=None,
                   compare_state_path=None, load_state_path=None,
                   warmup_first_test=False, reasoning_effort=None, temperature=None,
                   mdcat=True, replay=None, report_format="tui", prompt_progress=True, resume=None,
-                  preset=None, run_note=None, server_version=None):
+                  preset=None, run_note=None, server_version=None, reference_path=None, match="step"):
     """Run a suite. ``replay`` ({"fixture": path, "max_context", "no_subagents", "turns"}) selects the
     replay suite named by ``mode`` (e.g. "coding") instead of the smoke cases.
 
     Every live run saves one JSONL state per model (bench/state.py) under ``states_dir``; ``state_file`` names the file
     (with several models: one file per model, `_<model>` added to the name), ``save_state=False`` saves nothing.
+    ``reference_path`` (--reference) judges every answer against that saved run by ``match`` (bench/reference.py).
     ``cmdline`` is the argument list recorded in the header. ``compare_state_path`` (or, with ``load_state_path``, the
     saved run shown) is compared case by case with that state file.
 
@@ -444,7 +453,8 @@ def run_benchmark(mode, target_test_ids=None,
 
     report.configure(report_format)
     if load_state_path:  # no discovery, no requests: show the saved run again
-        display_state(load_state_path, target_test_ids=target_test_ids, compare_state_path=compare_state_path, mdcat=mdcat)
+        display_state(load_state_path, target_test_ids=target_test_ids, compare_state_path=compare_state_path, mdcat=mdcat,
+                      reference_path=reference_path, match=match)
         return
 
     out = output()
@@ -452,6 +462,13 @@ def run_benchmark(mode, target_test_ids=None,
     if compare_state_path:
         baseline = load_baseline(compare_state_path)
         check_baseline(baseline, mode, state_mod.file_sha256(replay["fixture"]) if replay and os.path.exists(replay["fixture"]) else None)
+    reference = None
+    if reference_path:
+        reference = reference_mod.load_reference(
+            reference_path, mode, state_mod.file_sha256(replay["fixture"]) if replay and os.path.exists(replay["fixture"]) else None, match)
+        warning = reference_mod.temperature_warning(reference, {"request": {"temperature": temperature}}, match)
+        if warning:
+            report.warn(warning)
     test_cases, selection_summary = _select_cases(mode, target_test_ids, replay, out)
 
     spinner = ProgressAnimation()
@@ -478,7 +495,7 @@ def run_benchmark(mode, target_test_ids=None,
     ctx = SimpleNamespace(
         mode=mode, out=out, spinner=spinner, progress_policy=PromptProgress(prompt_progress), test_cases=test_cases,
         resume=_resume_plan(resume, mode, replay, targets, test_cases) if resume else None, baseline=baseline,
-        infos={t["key"]: i for t, i in zip(targets, infos)}, replay=replay, preset=preset, run_note=run_note,
+        reference=reference, infos={t["key"]: i for t, i in zip(targets, infos)}, replay=replay, preset=preset, run_note=run_note,
         selection=selection, request_settings=request_settings, cmdline=cmdline, run_started=datetime.now(),
         save_state=save_state, state_file=state_file, states_dir=states_dir, reasoning_effort=reasoning_effort,
         temperature=temperature, warmup_first_test=warmup_first_test, mdcat=mdcat,

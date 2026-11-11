@@ -100,15 +100,15 @@ def baseline_identity(baseline):
     return baseline.identity
 
 
-def check_baseline(baseline, suite, sha):
+def check_baseline(baseline, suite, sha, flag="--compare-state"):
     """Raise UserError unless the baseline is the same suite (and fixture) as this run. Case ids alone do not make two
     runs comparable. A baseline that records no suite is accepted."""
     b_suite, b_sha = baseline_identity(baseline)
     if b_suite and suite and not same_suite(b_suite, suite):
-        raise UserError("--compare-state: the baseline %s is suite %s, this run is %s" % (baseline.path, b_suite, suite))
+        raise UserError("%s: the baseline %s is suite %s, this run is %s" % (flag, baseline.path, b_suite, suite))
     if b_sha and sha and b_sha != sha:
-        raise UserError("--compare-state: the baseline %s was run on another fixture (%s, this run %s)"
-                        % (baseline.path, b_sha[:8], sha[:8]))
+        raise UserError("%s: the baseline %s was run on another fixture (%s, this run %s)"
+                        % (flag, baseline.path, b_sha[:8], sha[:8]))
 
 
 def _start(h):

@@ -3,7 +3,8 @@
 import os
 import shlex
 
-from . import compare, perf
+from . import compare, perf, report
+from . import reference as reference_mod
 from . import results as R
 from . import state as state_mod
 from .baseline import Comparison, check_baseline, load_baseline
@@ -60,9 +61,11 @@ def print_final(out, ordered_targets, raw_results, base_runs, mdcat, state_paths
              est=perf.has_new_estimate(saved + entries))
 
 
-def display_state(load_state_path, target_test_ids=None, compare_state_path=None, mdcat=True):
+def display_state(load_state_path, target_test_ids=None, compare_state_path=None, mdcat=True, reference_path=None,
+                  match="step"):
     """Show a saved run again (no server): each model block of the file as a finished run, compared case by case with
-    the --compare-state file when given. `target_test_ids` narrows a smoke state to those cases."""
+    the --compare-state file when given. `target_test_ids` narrows a smoke state to those cases. With `reference_path`
+    (--reference) the run and its baseline are both judged against that run by `match`."""
     raw_results, targets = load_state(load_state_path)
     baseline = load_baseline(compare_state_path) if compare_state_path else None
     for t in targets:
@@ -77,6 +80,15 @@ def display_state(load_state_path, target_test_ids=None, compare_state_path=None
             raw_results[t["key"]] = {i: raw_results[t["key"]][i] for i in target_test_ids}
         if baseline:
             check_baseline(baseline, h.get("suite"), (h.get("fixture") or {}).get("sha256"))
+    reference = None
+    if reference_path:
+        h = targets[0].get("header") or {} if targets else {}
+        reference = reference_mod.load_reference(reference_path, h.get("suite"), (h.get("fixture") or {}).get("sha256"), match)
+        for t in targets:
+            raw_results[t["key"]] = reference.judge_all(raw_results[t["key"]], t["backend"], t["name"])
+            warning = reference_mod.temperature_warning(reference, t.get("header") or {}, match)
+            if warning:
+                report.warn(warning)
     out = output()
     ids = sorted({i for results in raw_results.values() for i in results})
     infos = [R.run_info("smoke", t) for t in targets]
@@ -89,6 +101,9 @@ def display_state(load_state_path, target_test_ids=None, compare_state_path=None
         shown = list(results.values())  # the run's order (a sanity state is not alphabetical)
         base_run = baseline.run_for(target, info) if baseline else None
         if base_run:
+            if reference:
+                bh = base_run.header
+                base_run.results = reference.judge_all(base_run.results, bh.get("backend"), bh.get("model"))
             base_runs[key] = base_run
         out.target_start(target, has_stats, shown, base_run)
         for metrics in shown:

@@ -7,7 +7,7 @@ notes: layout, rules and the design decisions below. User documentation is `READ
 ## Layout
 - `replay_bench.py`: the CLI. `--suite NAME`: `smoke` (the first four sanity cases), `sanity` (ten generic cases graded by validators, no replay), `coding` (replay `fixtures/conv-3.json.gz`, 470 requests), `judge` (one recorded match-judge case, `fixtures/judge.json.gz`); `--fixture FILE` overrides the suite's fixture. `--preset NAME` (quickstart = coding turns 1-5, small, medium, large = the default, xlarge, compaction, main, full, judge, smoke, sanity) is a named set of suite and selection options (`bench/presets.py`). One send per case, results keyed by case id. Servers: `--endpoint URL` (repeatable, `http(s)://host:port/v1`, default `http://localhost:8080/v1`), `--model SUBSTRING` filter, `--first-model`, `--api-key KEY`. `--discover` (alias `--list`) probes servers and prints models, quant, context, version, device and prefill-progress support without a chat request (exit 1 when nothing matched). Results go to stdout; state files are written by default to `states/` (or `--state-file FILE`, `--no-save-state`). Read back with `--state FILE` and compare with `--compare-state FILE` or `tools/replay_divergence.py`; both take a path or a name found in `states/`, `fixtures/refs/`, `fixtures/samples/`.
 - `replay-bench`: POSIX sh launcher (finds the checkout through symlinks and a Python 3.9+, `.venv` first); same as `python3 replay_bench.py`. `pip install -e .` installs the same entry point as `replay-bench`.
-- `bench/`: runner, transport, outputs, live line, display, telemetry, state (JSONL; a `route` line records an LM Studio /api/v0 to /v1 switch after the header), endpoint parsing, `backend.py` (server and model probes), `discovery.py`, `compare.py` (comparison against a baseline), `report.py` (markdown & TUI tables), `perf.py` (context and append breakdown tables); `bench/cases/` suites and grading (`smoke.py`, `sanity.py`, `replay.py`, `grading.py`, `judge.py`).
+- `bench/`: runner, transport, outputs, live line, display, telemetry, state (JSONL; a `route` line records an LM Studio /api/v0 to /v1 switch after the header), endpoint parsing, `backend.py` (server and model probes), `discovery.py`, `compare.py` (comparison against a baseline), `reference.py` (`--reference`: one answer against another run's answer, the agreement numbers), `report.py` (markdown & TUI tables), `perf.py` (context and append breakdown tables); `bench/cases/` suites and grading (`smoke.py`, `sanity.py`, `replay.py`, `grading.py`, `judge.py`).
 - `tools/`: maintainer tools.
   - Results: `triage_states.py` (incremental triage of states/), `add_ref.py` (scrubs and adds a reference run, or a sample with `--sample`), `build_checks.py` (rebuilds the expectation sidecar from the reference states; counts distinct models), `replay_divergence.py` (divergence matrix and split turns).
   - Testing: `mock_server.py` (llamacpp, mtplx, generic, ollama, lmstudio, mlx-dspark, mlx_lm flavours on 127.0.0.1, used by `make integration`).
@@ -82,6 +82,15 @@ gitignored `--names` file. The user decides what session content may be publishe
 - The first action category (`look`, `wait`, `change`, `delegate`, `plan`, `<text>`) is accepted at a turn when the
   recording took it or at least two distinct reference models did. Several quants or runs of one model count once.
   Argument-level agreement is not built.
+- `--reference STATE` (`bench/reference.py`) replaces the recording and the accepted steps with one run as the
+  yardstick, `--match step|targets|calls|exact` says what is the same answer (first step category; same tools in order on the same
+  targets: file without line range, set of bash programs, path; same calls in order, `i`
+  ignored, whitespace-normalised text; exact text and `i`). It is a post-pass view over the normal grading, like
+  `--compare-state`: stored verdicts stay the normal ones (the header records `reference`), FAIL stays FAIL, a
+  compaction or a turn the reference has no usable answer to keeps its normal verdict. It applies to a live run, to
+  `--state` and to the `--compare-state` baseline. Per-turn agreement (first step, tools, calls, text, args
+  similarity, tokens, broken, loops; same targets for every level, and calls/targets by the reference's first tool) feeds a `vs reference` line and Metrics rows. `targets`, `calls` and `exact` warn when a
+  side was not run at temperature 0.
 - References (`fixtures/refs/`) are the expected answers and the only input of `tools/build_checks.py`. Samples
   (`fixtures/samples/`) are for comparison only.
 

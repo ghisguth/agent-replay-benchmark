@@ -22,9 +22,9 @@ RESUME_MATCH = {  # change what is sent or how it is graded: a given value must 
 RESUME_PRESENTATION = {  # how the report looks or how the server is reached: the given value wins
     "api_key", "ca_file", "insecure", "no_prompt_progress", "run_note", "report_format", "no_mdcat", "no_nerd_font", "icons", "server_version",
 }
-RESUME_INCOMPATIBLE = {"load_state", "state_file", "no_save_state", "compare_state", "dry_run", "list"}
+RESUME_INCOMPATIBLE = {"load_state", "state_file", "no_save_state", "compare_state", "reference", "match", "dry_run", "list"}
 RESUME_OWN = {"resume", "version"}  # plus -h/--help, which exits before any of this
-_STATE_FLAGS = {"--state", "--state-file", "--compare-state"}  # take a value; dropped from the recorded command
+_STATE_FLAGS = {"--state", "--state-file", "--compare-state", "--reference", "--match"}  # take a value; dropped from the recorded command
 _NOT_GIVEN = object()
 
 
@@ -178,7 +178,7 @@ def apply_resume(parser, args, argv, resolve_state=resolve_state):
     if diffs:
         raise UserError("--resume: options differ from the recorded run in %s:\n  %s\n(start a new run to change them)"
                         % (path, "\n  ".join(diffs)))
-    for d in ("state_file", "no_save_state", "compare_state", "load_state", "resume"):
+    for d in ("state_file", "no_save_state", "compare_state", "load_state", "resume", "reference", "match"):
         setattr(merged, d, None if d != "no_save_state" else False)
     given_tokens = _tokens_without(sys.argv[1:] if argv is None else argv, {"--resume"})
     shown = state_mod.sanitize_argv(recorded_argv + given_tokens)  # never echo an API key

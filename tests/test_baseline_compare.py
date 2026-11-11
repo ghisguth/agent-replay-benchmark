@@ -307,6 +307,79 @@ class SeveralBlocks(Base):
         self.assertIn("compared with: x", out)
 
 
+class AgainstReference(Base):
+    """--state A --compare-state B --reference C: both runs are judged against C."""
+
+    def files(self):
+        ref = self.make("c.jsonl", [("ref", {}, 30.0, None, None)])
+        a = self.make("a.jsonl", [("a", {}, 30.0, {IDS[0]: (("read",), "PASS")}, None)])
+        b = self.make("b.jsonl", [("b", {}, 30.0, {IDS[0]: (("read",), "PASS"), IDS[1]: (("read",), "PASS")}, None)])
+        return a, b, ref
+
+    def test_both_runs_are_judged_against_the_reference(self):
+        a, b, ref = self.files()
+        out, _ = run("--state", a, "--compare-state", b, "--reference", ref, "--match", "calls", "--no-mdcat")
+        self.assertIn("5 PASS · 1 WARN · 0 FAIL", out)
+        self.assertIn("vs reference ref: same first step 100% · same tools 83% · same targets 83% · same calls 83%", out)
+        row = lambda label: next(ln for ln in out.splitlines() if ln.lstrip("│ ").startswith(label))
+        cells = [c.strip() for c in row("Same calls %").strip("│").split("│")]
+        self.assertEqual(cells, ["Same calls %", "67%", "83%", "+16.7 pt"])  # B (baseline), A, change
+        self.assertEqual([c.strip() for c in row("Broken calls").strip("│").split("│")][1:], ["0", "0", "+0"])
+        self.assertIn("R000_main_e0_t000  WARN  call 1: read, reference bash", out)
+
+    def test_the_agreement_rows_have_the_targets_and_per_tool_rows(self):
+        a, b, ref = self.files()
+        out, _ = run("--state", a, "--compare-state", b, "--reference", ref, "--match", "targets", "--no-mdcat")
+        row = lambda label: next(ln for ln in out.splitlines() if ln.lstrip("│ ").startswith(label))
+        cells = [c.strip() for c in row("Same targets %").strip("│").split("│")]
+        self.assertEqual(cells[0], "Same targets %")
+        self.assertIn("pt", cells[3])
+        for label in ("Same calls by first tool", "Same targets by first tool"):
+            cells = [c.strip() for c in row(label).strip("│").split("│")]
+            self.assertEqual(len(cells), 4)
+            self.assertRegex(cells[1], r"\w+ \d+/\d+")   # baseline
+            self.assertRegex(cells[2], r"\w+ \d+/\d+")   # this run
+            self.assertEqual(cells[3], "")                 # no change cell
+        names = [ln.lstrip("│ ") for ln in out.splitlines()]
+        order = [next(i for i, n in enumerate(names) if n.startswith(x)) for x in ("Same tools %", "Same targets %", "Same calls %")]
+        self.assertEqual(order, sorted(order))
+
+    def test_verdict_changes_use_the_reference_verdicts(self):
+        a, b, ref = self.files()
+        out, _ = run("--state", a, "--compare-state", b, "--reference", ref, "--match", "calls", "--no-mdcat")
+        changes = out.split("Verdict changes")[1].split("Anomalies")[0]
+        self.assertIn("R001_main_e0_t001  WARN → PASS", changes)  # B differs from C there, A does not
+        self.assertNotIn("R000_main_e0_t000", changes)           # both differ from C
+
+    def test_the_stored_verdicts_are_not_changed_and_without_a_reference_nothing_is_added(self):
+        a, b, ref = self.files()
+        out, _ = run("--state", a, "--no-mdcat")
+        self.assertNotIn("vs reference", out)
+        self.assertNotIn("Same calls %", out)
+
+    def test_reference_of_another_suite_is_refused(self):
+        a, b, ref = self.files()
+        sanity = self.make("s.jsonl", [("s", {}, 30.0, None, None)], suite="sanity")
+        out = io.StringIO()
+        with contextlib.redirect_stderr(out), self.assertRaises(SystemExit):
+            replay_bench.main(["--state", a, "--reference", sanity])
+        self.assertIn("is suite sanity", out.getvalue())
+
+    def test_match_needs_a_reference(self):
+        a, _, _ = self.files()
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit):
+            replay_bench.main(["--state", a, "--match", "calls"])
+        self.assertIn("--match needs --reference", err.getvalue())
+
+    def test_temperature_warning_with_calls_but_not_with_step(self):
+        a, _, ref = self.files()
+        _, err = run("--state", a, "--reference", ref, "--match", "calls", "--no-mdcat")
+        self.assertIn("not sent at temperature 0", err)
+        _, err = run("--state", a, "--reference", ref, "--no-mdcat")
+        self.assertNotIn("temperature", err)
+
+
 class BaseCell(unittest.TestCase):
     def test_cells(self):
         m = result("a", 10, ("bash",))

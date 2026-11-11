@@ -125,7 +125,7 @@ def sanitize_argv(argv, cwd=None):
 
 
 def make_header(suite, target, request=None, fixture_path=None, argv=None, selection=None, started_at=None,
-                preset=None, note=None):
+                preset=None, note=None, reference=None):
     """The run header of one (endpoint, model) target."""
     fixture = None
     if fixture_path:
@@ -157,6 +157,8 @@ def make_header(suite, target, request=None, fixture_path=None, argv=None, selec
         header["preset"] = preset
     if note:
         header["note"] = note
+    if reference:
+        header["reference"] = reference
     if target.get("model_info"):
         header["model_info"] = target["model_info"]
     return header

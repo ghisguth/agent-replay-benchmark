@@ -11,7 +11,7 @@ import os
 import sys
 import textwrap
 
-from bench import auth, device, paths, report
+from bench import auth, device, paths, reference, report
 from bench.cases import replay as replay_cases
 from bench.cli_args import parse_max_context, parse_run_note, parse_server_version, parse_turns_range
 from bench.colors import Clr
@@ -172,6 +172,12 @@ Examples:
     replay_bench.py --state new.jsonl --compare-state base.jsonl
     replay_bench.py --endpoint http://localhost:8080/v1 --compare-state base.jsonl
 
+  Judge quants against one reference run (temperature 0 for both):
+    replay_bench.py --endpoint http://localhost:8080/v1 --temperature 0 \\
+        --reference ref_q8.jsonl --match targets
+    replay_bench.py --state quant_a.jsonl --compare-state quant_b.jsonl \\
+        --reference ref_q8.jsonl --match targets
+
   Label what the server cannot tell (speculative decoding, build) so runs stay apart:
     replay_bench.py --endpoint http://localhost:8080/v1 --run-note MTP --server-version 1.6.0-m1\
 """
@@ -262,11 +268,16 @@ def build_parser():
     g.add_argument("--state", metavar="FILE", dest="load_state", action="append",
                    help="Show one saved run again without sending anything (schema 1 JSONL); FILE is a path or a name (substring) in states/, fixtures/refs/ or fixtures/samples/\nnot with: --state-file, --no-save-state, --resume\n(see README, Comparing runs)")
     g.add_argument("--resume", metavar="FILE",
-                   help="Continue an interrupted run from its state file\nnot with: --state, --state-file, --no-save-state, --compare-state, --dry-run, --list\n(see README, State files)")
+                   help="Continue an interrupted run from its state file\nnot with: --state, --state-file, --no-save-state, --compare-state, --reference, --dry-run, --list\n(see README, State files)")
 
     g = parser.add_argument_group("Comparison")
     g.add_argument("--compare-state", metavar="FILE", dest="compare_state",
                    help="Compare this run with a saved baseline run FILE (a path or a name in states/, fixtures/refs/ or fixtures/samples/)\nnot with: --resume, --report-format chat, chat-compact (tabular)\n(see README, Comparing runs)")
+
+    g.add_argument("--reference", metavar="FILE", dest="reference",
+                   help="Judge every answer against this saved run FILE (a path or a name in states/, fixtures/refs/ or fixtures/samples/) instead of the recording: PASS where the answer matches the reference's at that request (see --match), WARN with the first difference otherwise; broken answers stay FAIL. Adds a `vs reference` line and the agreement rows to Metrics. With --state it judges the saved run, and the --compare-state baseline too\nsame suite and fixture as the run; replay suites only\nnot with: --resume\n(see README, Comparing quants against one reference)")
+    g.add_argument("--match", choices=reference.MATCHES, default=None, metavar="RULE",
+                   help="What counts as the same answer as the reference's\n  step   the same kind of first step (look, change, ...) (default)\n  targets  the same tools in the same order on the same targets: read/write/edit the file (line range ignored), bash the set of programs, grep/find/glob/ls the path\n  calls  the same tool calls in the same order with the same arguments (the intent argument i ignored), the same text after whitespace normalisation\n  exact  as calls, with i and the exact text; reasoning text is not stored, so it is not compared\nwith: --reference (sampling noise dominates unless both runs use --temperature 0)")
 
     g = parser.add_argument_group("Output")
     g.add_argument("--report-format", choices=report.FORMATS, default="tui", dest="report_format", metavar="F",
@@ -314,6 +325,10 @@ def _main(argv=None):
         args.load_state = resolve_state(args.load_state[0], states_dir=STATES_DIR)
     if args.compare_state:
         args.compare_state = resolve_state(args.compare_state, states_dir=STATES_DIR)
+    if args.match and not args.reference:
+        parser.error("--match needs --reference")
+    if args.reference:
+        args.reference = resolve_state(args.reference, states_dir=STATES_DIR)
     if args.load_state and args.state_file:
         parser.error("--state and --state-file are mutually exclusive.")
     if args.state_file and args.no_save_state:
@@ -385,6 +400,7 @@ def _main(argv=None):
         states_dir=STATES_DIR,
         cmdline=list(sys.argv[1:] if argv is None else argv),
         compare_state_path=args.compare_state,
+        reference_path=args.reference, match=args.match or "step",
         load_state_path=args.load_state,
         mdcat=not args.no_mdcat,
         warmup_first_test=args.warmup_first_test,

@@ -203,6 +203,60 @@ python3 replay_bench.py --endpoint http://localhost:8080/v1 --temperature 0.6 --
 
 ---
 
+## Comparing quants against one reference
+
+By default an answer is judged against the recorded session and the accepted first steps of the reference models. To
+measure how far a quant moves from its own model (like KLD against the full-precision weights), judge every answer
+against one other run instead: `--reference FILE`. The run, a saved run (`--state`) and the `--compare-state` baseline
+can all be judged against it. The reference must be a run of the same suite and fixture.
+
+Use temperature 0 for the reference and for every run you compare with it:
+
+```bash
+# 1. The reference: the highest quant, greedy
+python3 replay_bench.py --model exact:unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL --temperature 0
+
+# 2. Each quant, greedy, judged against the reference
+python3 replay_bench.py --model exact:mlx-community/Qwen3.8-27B-4bit --temperature 0 \
+    --reference states/<reference run>.jsonl --match targets
+
+# 3. Two quants side by side, both judged against the reference (no server needed)
+python3 replay_bench.py --state quant_a.jsonl --compare-state quant_b.jsonl \
+    --reference reference.jsonl --match targets
+```
+
+`--match` says what counts as the same answer at a request:
+
+- `step` (default): the same kind of first action (`look`, `change`, `wait`, `delegate`, `plan`, text).
+- `targets`: the same tools in the same order, each on the same target: the file of `read`/`write`/`edit` (a `:N-M`
+  line range and whitespace ignored), the set of programs a `bash` command runs (the first word of each segment split on
+  `;`, `&&`, `||`, `|`), the `path` of `grep`/`find`/`glob`/`ls` (without one, the tool name alone), the tool name alone
+  for any other tool. Wording of the arguments does not matter, so this is the level that ranks quants at temperature 0,
+  where one flipped token changes the thinking and the arguments. Text answers compare as under `calls`.
+- `calls`: the same tool calls in the same order with the same arguments (key order and JSON whitespace do not
+  matter, the free-text intent argument `i` is ignored); a text answer must be the same text after whitespace is
+  normalised.
+- `exact`: like `calls`, with the intent argument and the exact text. Reasoning text is not stored in state files, so
+  it is not compared.
+
+A match is PASS; anything else is WARN and names the first difference (`call 2 bash: command differs`,
+`call 2 read: other file (a.cs vs b.cs)`, `call 1 bash: other programs (grep, ls vs cat)`, `3 calls vs 2`, `text differs`). Broken answers stay FAIL (empty, cut at the cap, invalid tool call, loops), and a
+request the reference has no answer to (it failed, was skipped or is missing) keeps its normal verdict, marked
+`(no reference answer)`. Compactions keep their normal grading. The stored verdicts of a run are not changed: the
+reference is a view, and the state header records its file, sha256 and `--match`.
+
+Under the summary line a `vs reference` line gives the per-turn agreement, and the same numbers are rows of Metrics
+(with the baseline and the change when `--compare-state` is used): same first step, same tools (the ordered tool
+names), same targets, same calls, same text (turns where the reference answered in text), args similarity (1.00 = identical, over
+turns whose tools match; "same targets" is computed for every `--match`), output tokens as a ratio of the reference's, broken calls and loops. Two more rows, `Same calls by first tool` and `Same targets by first tool`, group the turns by
+the reference's first tool and show `read 8/12 · bash 8/27 · ...` (agreeing turns / turns, most frequent first).
+
+Above temperature 0 sampling noise dominates: a model compared with itself at temperature 0.6 agrees on only about
+four in five calls. `--match targets`, `calls` and `exact` therefore warn when the run or the reference was not sent at
+temperature 0.
+
+---
+
 ## Report formats
 
 The output format is controlled with `--report-format`:

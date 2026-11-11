@@ -150,6 +150,23 @@ class EndToEnd(unittest.TestCase):
                 self.assertIn("|", r.stdout)
             self.assertEqual(len(of_type(read_state(state), "result")), 6)
 
+    def test_reference_run_of_the_deterministic_mock_agrees_with_itself(self):
+        srv = self.server()
+        ref = self.path("ref.jsonl")
+        self.run_ok(srv, *REPLAY, "--temperature", "0", "--state-file", ref)
+        state = self.path("quant.jsonl")
+        r = self.run_ok(srv, *REPLAY, "--temperature", "0", "--reference", ref, "--match", "calls", "--state-file", state)
+        self.assertIn("same calls 100%", r.stdout)
+        self.assertIn("same first step 100%", r.stdout)
+        self.assertNotIn("temperature 0", r.stderr)
+        head = of_type(read_state(state), "run")[0]
+        self.assertEqual(head["reference"]["file"], "ref.jsonl")
+        self.assertEqual(head["reference"]["match"], "calls")
+        self.assertEqual(len(head["reference"]["sha256"]), 64)
+        shown = cli("--state", state, "--reference", ref, "--match", "exact")
+        self.assertEqual(shown.returncode, 0, shown.stdout[-1500:] + shown.stderr[-1500:])
+        self.assertIn("same calls 100%", shown.stdout)
+
     def test_state_replays_without_a_server(self):
         srv = self.server()
         state = self.path("s.jsonl")
