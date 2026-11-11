@@ -538,11 +538,14 @@ with the current validators when shown again.
   including the compaction, and two subagents with 72 and 100 requests). `fixtures/judge.json.gz` is the `judge` case.
 - `fixtures/conv-3.checks.json`: expectations per turn (required compaction headings, subagent report patterns,
   accepted action categories). Built by `tools/build_checks.py` from the references.
-- `fixtures/refs/` (6 runs, see [`fixtures/refs/README.txt`](fixtures/refs/README.txt)): the expected answers, runs of high-fidelity models (Qwen3.8-27B at Q8_0 and mlx 4bit,
-  Qwen3.8-Flash-Next at GSQ-RCO and UD-IQ1_S, on llama.cpp and Splash). Steps are counted per distinct model, not per
+- `fixtures/refs/` (10 runs, see [`fixtures/refs/README.txt`](fixtures/refs/README.txt)): the expected answers, runs of high-fidelity models (Qwen3.8-27B at
+  UD-Q8_K_XL, Q8_0 and mlx 4bit, Qwen3.8-Flash-Next at GSQ-RCO and UD-IQ1_S, on llama.cpp and Splash; the UD-Q8_K_XL and
+  Q8_0 `large` runs at temperature 0, with thinking and with `--thinking off`, are the yardstick for `--reference`). Steps are counted per distinct model, not per
   run.
-- `fixtures/samples/` (24 runs): shipped runs to compare with, never used for grading. They include the quickstart run
-  of every supported engine on an M2 Max 64GB with Qwen3.8-27B, and larger runs of several models and quants.
+- `fixtures/samples/` (34 runs): shipped runs to compare with, never used for grading. They include the quickstart run
+  of every supported engine on an M2 Max 64GB with Qwen3.8-27B, larger runs of several models and quants, the
+  temperature-0 `large` runs of the 4-bit Qwen3.8-27B quants (UD-Q4_K_M, Q4_0, mlx 4bit, GPTQ; with thinking and with
+  `--thinking off`) to judge with `--reference`, and a second UD-Q8_K_XL run of each, identical to the reference.
 - `docs/capture-traces.md`: how to capture a session and build a fixture (needs raw session sources).
 
 ```bash

@@ -214,6 +214,7 @@
       "change"
     ],
     "main/0/turn/56": [
+      "change",
       "look"
     ],
     "main/0/turn/57": [
@@ -1510,7 +1511,11 @@
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (splash-1.6.0-m1_ISTA-DASLab-Qwen3.8-Flash-Next-GSQ-RCO-GGUF_conv-3_t0.6_20261107-092734.jsonl, 2026-11-07)",
     "mlx-community/Qwen3.8-27B-4bit (splash-1.6.0-m1_MBP-M2Max-64GB_mlx-community-Qwen3.8-27B-4bit_coding-full_t0.6_20261107-212525.jsonl, 2026-11-08)",
     "unsloth/Qwen3.8-27B-GGUF:Q8_0 (splash-1.6.0-m1_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_conv-3_t0.6_20261107-125422.jsonl, 2026-11-07)",
-    "unsloth/Qwen3.8-Flash-Next-GGUF:UD-IQ1_S (splash-1.6.0-m1_MBP-M2Max-64GB_unsloth-Qwen3.8-Flash-Next-GGUF-UD-IQ1_S_conv-3_t0.6_20261107-122645.jsonl, 2026-11-07)"
+    "unsloth/Qwen3.8-Flash-Next-GGUF:UD-IQ1_S (splash-1.6.0-m1_MBP-M2Max-64GB_unsloth-Qwen3.8-Flash-Next-GGUF-UD-IQ1_S_conv-3_t0.6_20261107-122645.jsonl, 2026-11-07)",
+    "unsloth/Qwen3.8-27B-GGUF:Q8_0 (splash-37c550ac_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_coding-large_t0_20261110-113106.jsonl, 2026-11-10)",
+    "unsloth/Qwen3.8-27B-GGUF:Q8_0 (splash-37c550ac_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-Q8_0_coding-large_t0_e-none_think-off_20261110-214433.jsonl, 2026-11-11)",
+    "unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL (splash-37c550ac_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-UD-Q8_K_XL_coding-large_t0_20261110-101551.jsonl, 2026-11-10)",
+    "unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL (splash-37c550ac_MBP-M2Max-64GB_unsloth-Qwen3.8-27B-GGUF-UD-Q8_K_XL_coding-large_t0_e-none_think-off_20261110-211505.jsonl, 2026-11-11)"
   ],
   "fixture_sha256": "cc94c0968da96bcbe54f496bd2ffa3bc8954b12ebce08bf4d3dc32d1b8dd5905"
 }
