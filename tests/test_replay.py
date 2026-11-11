@@ -202,6 +202,25 @@ class CasesAndPayload(unittest.TestCase):
         self.assertEqual((p4["reasoning_effort"], p4["temperature"]), ("high", 0.2))
         self.assertEqual(len(p4["messages"]), 4)
 
+    def test_payload_thinking(self):
+        c = {c["id"]: c for c in self.cases()}["R003_main_e0_t001"]
+        rec = {"enable_thinking": True, "preserve_thinking": True}
+        c["entry"]["params"]["chat_template_kwargs"] = dict(rec)
+        off = replay.build_payload(c, "m", thinking=False)
+        self.assertEqual(off["chat_template_kwargs"], {"enable_thinking": False, "preserve_thinking": True})
+        self.assertIsNot(off["chat_template_kwargs"], c["entry"]["params"]["chat_template_kwargs"])
+        self.assertEqual(c["entry"]["params"]["chat_template_kwargs"], rec)  # the shared params are untouched
+        c["entry"]["params"]["chat_template_kwargs"] = {"enable_thinking": False}
+        self.assertTrue(replay.build_payload(c, "m", thinking=True)["chat_template_kwargs"]["enable_thinking"])
+        self.assertEqual(c["entry"]["params"]["chat_template_kwargs"], {"enable_thinking": False})
+        self.assertEqual(replay.build_payload(c, "m")["chat_template_kwargs"], {"enable_thinking": False})  # as recorded
+        self.assertEqual(replay.build_payload(c, "m", reasoning_effort="none")["chat_template_kwargs"],
+                         {"enable_thinking": False})
+        del c["entry"]["params"]["chat_template_kwargs"]
+        self.assertEqual(replay.build_payload(c, "m", thinking=False)["chat_template_kwargs"], {"enable_thinking": False})
+        self.assertNotIn("chat_template_kwargs", replay.build_payload(c, "m"))
+        self.assertNotIn("chat_template_kwargs", c["entry"]["params"])
+
     def test_skip_reason(self):
         c = {c["id"]: c for c in self.cases()}["R007_main_c0"]  # 4500 tokens
         self.assertIsNone(replay.skip_reason(c, {"n_ctx": None}))
@@ -431,6 +450,11 @@ class EndToEnd(unittest.TestCase):
             self.run_replay(srv, "--turns", "1-1", "--reasoning-effort", "high", "--temperature", "0.3")
         p = srv.requests[1]
         self.assertEqual((p["reasoning_effort"], p["temperature"]), ("high", 0.3))
+
+    def test_thinking_off_on_request(self):
+        with MockServer(behaviour=compaction_aware) as srv:
+            self.run_replay(srv, "--turns", "1-1", "--thinking", "off")
+        self.assertIs(srv.requests[1]["chat_template_kwargs"]["enable_thinking"], False)
 
     def test_errors_fail_the_request(self):
         def broken(payload):

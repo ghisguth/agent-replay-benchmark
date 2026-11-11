@@ -105,6 +105,17 @@ class Resume(unittest.TestCase):
         self.assertEqual(list(raw[keys[0]["key"]]), order)
         self.assertIsNone(keys[0]["end"].get("reason"))
 
+    def test_thinking_is_restored_on_resume(self):
+        with SplashLike(behaviour) as srv:
+            self.first_run(srv, 3, "--thinking", "off")
+            self.assertEqual(self.records()[0]["request"]["thinking"], "off")
+            srv.requests.clear()
+            _, err, code = run_code("--resume", self.path)
+            self.assertEqual(code, 0, err)
+            sent = self.case_requests(srv)
+        self.assertTrue(sent)
+        self.assertTrue(all(r["chat_template_kwargs"]["enable_thinking"] is False for r in sent))
+
     def test_resuming_a_resumed_file_again(self):
         with SplashLike(behaviour) as srv:
             self.first_run(srv, 2)
@@ -153,6 +164,7 @@ class Resume(unittest.TestCase):
             srv.requests.clear()
             for extra, name in ((["--max-context", "64k"], "--max-context: recorded none, given 65536"),
                                 (["--temperature", "0.5"], "--temperature: recorded none, given 0.5"),
+                                (["--thinking", "off"], "--thinking: recorded none, given off"),
                                 (["--turns", "1-4"], "--turns"), (["--no-subagents"], "--no-subagents"),
                                 (["--model", "nothing-like-it"], "--model")):
                 _, err, code = run_code("--resume", self.path, *extra)

@@ -727,7 +727,9 @@ def selection_text(sel):
 def sampling_text(req):
     req = req or {}
     t, e = req.get("temperature"), req.get("reasoning_effort")
-    return "temperature %s, reasoning effort %s" % ("server default" if t is None else t, "none sent" if e is None else e)
+    th = req.get("thinking")
+    return "temperature %s, reasoning effort %s%s" % ("server default" if t is None else t, "none sent" if e is None else e,
+                                                     "" if th is None else ", thinking %s" % th)
 
 
 def headline(infos, n_cases):

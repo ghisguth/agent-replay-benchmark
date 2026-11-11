@@ -53,9 +53,9 @@ is realistic, so speed and cache behaviour at depth are measured too.
 ### Fixture format
 Gzipped JSON: a shared message pool plus per-entry index lists, entries in chronological order (turns and compactions).
 Each entry holds the stream, the message count, the recorded request parameters, the recorded answer and the recorded
-prompt and output token counts. Payload = recorded parameters, messages and tools with `model` swapped; no temperature
-or reasoning effort unless given (omp sent neither). Cutoffs: 32768 output tokens, 1800 s per request. A case is
-SKIP when prompt plus reserve exceeds the server's context.
+prompt and output token counts. Payload = recorded parameters, messages and tools with `model` swapped; no temperature,
+reasoning effort or thinking switch unless given (omp sent `enable_thinking: true`; `--thinking off` overrides it).
+Cutoffs: 32768 output tokens, 1800 s per request. A case is SKIP when prompt plus reserve exceeds the server's context.
 
 ### Proof that a rebuilt request is exact
 A fixture is built only from streams that rebuild exactly (`docs/capture-traces.md`):

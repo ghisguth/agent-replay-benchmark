@@ -95,14 +95,20 @@ def _replay_fields(tc):
     return {}
 
 
+def _thinking_flag(thinking):
+    """--thinking on/off (or a bool) as the enable_thinking boolean; None stays None."""
+    return None if thinking is None else thinking in (True, "on")
+
+
 def query_model(endpoint_url, model_name, tc, max_tokens=None, reasoning_effort=None, state=None, temperature=None,
-                prompt_progress=False):
+                prompt_progress=False, thinking=None):
     """prompt_progress: ask the server for prefill progress on streaming requests: True adds return_progress to the
     body, "header" sends the Kapitsa opt-in header instead, "snapshot" (MTPLX) sends x-mtplx-request-id and polls the
     snapshot endpoint meanwhile."""
     if tc.get("fixture") is not None:
         # Replay case: the recorded request, built now and dropped when this call returns.
-        payload = replay_cases.build_payload(tc, model_name, reasoning_effort=reasoning_effort, temperature=temperature)
+        payload = replay_cases.build_payload(tc, model_name, reasoning_effort=reasoning_effort, temperature=temperature,
+                                             thinking=_thinking_flag(thinking))
         if max_tokens is not None:  # only the --warmup-first-test warmup caps a replay request
             payload["max_tokens"] = max_tokens
         return send_progress(endpoint_url, payload, tc, state, prompt_progress)
@@ -123,6 +129,9 @@ def query_model(endpoint_url, model_name, tc, max_tokens=None, reasoning_effort=
 
     if reasoning_effort is not None:
         payload["reasoning_effort"] = reasoning_effort
+
+    if thinking is not None:
+        payload["chat_template_kwargs"] = {"enable_thinking": _thinking_flag(thinking)}
 
     # Sampling temperature: sent only when given (--temperature), else the server's default applies.
     if temperature is not None:
@@ -252,7 +261,7 @@ def _warm_up(ctx, tr):
     try:
         res = post_with_fallback(t, lambda url: query_model(
             url, t["name"], warmup_tc, max_tokens=256, reasoning_effort=ctx.reasoning_effort,
-            temperature=ctx.temperature))
+            temperature=ctx.temperature, thinking=ctx.thinking))
     finally:
         ctx.spinner.stop()
     if res.get("error"):
@@ -308,7 +317,8 @@ def _send_case(ctx, target, tc, label, live, prog, hist):
             lambda: send_with_progress_fallback(
                 lambda with_progress: post_with_fallback(target, lambda url: query_model(
                     url, target["name"], tc, reasoning_effort=ctx.reasoning_effort,
-                    temperature=ctx.temperature, state=live, prompt_progress=with_progress)),
+                    temperature=ctx.temperature, state=live, prompt_progress=with_progress,
+                    thinking=ctx.thinking)),
                 policy, target, spinner, start_spinner),
             target["url"], spinner, start_spinner)
     finally:
@@ -431,7 +441,7 @@ def run_benchmark(mode, target_test_ids=None,
                   endpoints=None, model_filters=None, first_model=False,
                   state_file=None, save_state=True, states_dir="states", cmdline=None,
                   compare_state_path=None, load_state_path=None,
-                  warmup_first_test=False, reasoning_effort=None, temperature=None,
+                  warmup_first_test=False, reasoning_effort=None, temperature=None, thinking=None,
                   mdcat=True, replay=None, report_format="tui", prompt_progress=True, resume=None,
                   preset=None, run_note=None, server_version=None, reference_path=None, match="step"):
     """Run a suite. ``replay`` ({"fixture": path, "max_context", "no_subagents", "turns"}) selects the
@@ -483,7 +493,7 @@ def run_benchmark(mode, target_test_ids=None,
     for t in targets:
         t["backend_info"] = backend.apply_version_override(t.get("backend_info"), server_version)
 
-    request_settings = {"temperature": temperature, "reasoning_effort": reasoning_effort}
+    request_settings = {"temperature": temperature, "reasoning_effort": reasoning_effort, "thinking": thinking}
     selection = None
     if replay is not None:
         selection = {"max_context": replay.get("max_context"), "no_subagents": replay.get("no_subagents", False),
@@ -497,7 +507,7 @@ def run_benchmark(mode, target_test_ids=None,
         resume=_resume_plan(resume, mode, replay, targets, test_cases) if resume else None, baseline=baseline,
         reference=reference, infos={t["key"]: i for t, i in zip(targets, infos)}, replay=replay, preset=preset, run_note=run_note,
         selection=selection, request_settings=request_settings, cmdline=cmdline, run_started=datetime.now(),
-        save_state=save_state, state_file=state_file, states_dir=states_dir, reasoning_effort=reasoning_effort,
+        save_state=save_state, state_file=state_file, states_dir=states_dir, reasoning_effort=reasoning_effort, thinking=thinking,
         temperature=temperature, warmup_first_test=warmup_first_test, mdcat=mdcat,
         targets=[], raw_results={}, state_paths=[], base_runs={}, n_targets=len(targets))
 

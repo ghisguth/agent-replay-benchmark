@@ -226,6 +226,16 @@ class KapitsaStream(unittest.TestCase):
         self.assertEqual(m["ttft_ms"], 0)
         self.assertEqual(state["down"], 0)
 
+    def test_thinking_sets_enable_thinking_on_smoke_payloads(self):
+        sent = []
+        with mock.patch.object(transport, "_send", side_effect=lambda *a, **k: sent.append(a[1]) or {}):
+            runner.query_model("u", "m", CASE, thinking="off")
+            runner.query_model("u", "m", CASE, thinking="on", max_tokens=256)
+            runner.query_model("u", "m", CASE)
+        self.assertEqual(sent[0]["chat_template_kwargs"], {"enable_thinking": False})
+        self.assertEqual(sent[1]["chat_template_kwargs"], {"enable_thinking": True})
+        self.assertNotIn("chat_template_kwargs", sent[2])
+
     def test_header_only_for_kapitsa_and_only_streaming(self):
         sent = []
         with mock.patch.object(transport, "_send", side_effect=lambda *a, **k: sent.append((a[1], k)) or {}):

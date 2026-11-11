@@ -17,7 +17,7 @@ from .utils import UserError
 # forgotten). Keys are argparse dests.
 RESUME_MATCH = {  # change what is sent or how it is graded: a given value must equal the recorded one
     "suite", "preset", "fixture", "max_context", "no_subagents", "turns", "test", "endpoint", "model", "first_model",
-    "warmup_first_test", "reasoning_effort", "temperature", "no_temperature", "device",
+    "warmup_first_test", "reasoning_effort", "thinking", "temperature", "no_temperature", "device",
 }
 RESUME_PRESENTATION = {  # how the report looks or how the server is reached: the given value wins
     "api_key", "ca_file", "insecure", "no_prompt_progress", "run_note", "report_format", "no_mdcat", "no_nerd_font", "icons", "server_version",

@@ -210,7 +210,9 @@ measure how far a quant moves from its own model (like KLD against the full-prec
 against one other run instead: `--reference FILE`. The run, a saved run (`--state`) and the `--compare-state` baseline
 can all be judged against it. The reference must be a run of the same suite and fixture.
 
-Use temperature 0 for the reference and for every run you compare with it:
+Use temperature 0 for the reference and for every run you compare with it. omp's recorded requests set
+`enable_thinking: true`, so `--reasoning-effort none` alone does not turn thinking off on Splash; use `--thinking off`
+(it sets `chat_template_kwargs.enable_thinking`, default: as recorded):
 
 ```bash
 # 1. The reference: the highest quant, greedy

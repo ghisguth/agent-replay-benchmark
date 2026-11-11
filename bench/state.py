@@ -3,7 +3,7 @@
 File layout (one JSON object per line):
   {"type": "run", ...}      header, first line of a model's block: schema, suite, fixture {file, sha256}, started_at,
                             endpoint, backend (host:port label), model, n_ctx, server (bench/backend.py's
-                            {kind, version, build, details}), request {temperature, reasoning_effort}, git_commit, argv, and note (--run-note, e.g. "MTP": what the
+                            {kind, version, build, details}), request {temperature, reasoning_effort, thinking}, git_commit, argv, and note (--run-note, e.g. "MTP": what the
                             server's settings were when the header cannot tell, shown next to the model everywhere)
   {"type": "result", ...}   one per case, written and flushed as soon as the case is graded: id, the runner's metrics,
                             content, tool_calls, finish_reason, reasoning_chars / reasoning_tokens (never the thinking
@@ -147,7 +147,7 @@ def make_header(suite, target, request=None, fixture_path=None, argv=None, selec
         "server": target.get("backend_info"),
         "device": target.get("device"),
         "client_device": device.local(),
-        "request": {"temperature": None, "reasoning_effort": None, **(request or {})},
+        "request": {"temperature": None, "reasoning_effort": None, "thinking": None, **(request or {})},
         "git_commit": git_commit(),
         "argv": sanitize_argv(argv),
     }
@@ -205,8 +205,8 @@ def model_file_slug(model, model_info=None):
 
 
 def default_path(states_dir, info, model, suite, when=None, request=None, dev=None, preset=None, note=None, model_info=None):
-    """states/<backend>-<version>[_<device>]_<model-slug>_<suite>[_t<temperature>][_e-<effort>]_<YYYYmmdd-HHMMSS>.jsonl (never an
-    existing file; `_<note>` after the sampling parts, slugified and lower-cased: ..._t0.6_mtp_...). A run with a preset is named <suite>-<preset> (coding-large) instead of <suite>, unless the preset has the suite's name (judge, smoke). The sampling parts appear only when --temperature / --reasoning-effort were given."""
+    """states/<backend>-<version>[_<device>]_<model-slug>_<suite>[_t<temperature>][_e-<effort>][_think-on|off]_<YYYYmmdd-HHMMSS>.jsonl (never an
+    existing file; `_<note>` after the sampling parts, slugified and lower-cased: ..._t0.6_mtp_...). A run with a preset is named <suite>-<preset> (coding-large) instead of <suite>, unless the preset has the suite's name (judge, smoke). The sampling parts appear only when --temperature / --reasoning-effort / --thinking were given."""
     info = info or {}
     note = note or (model_info.get("mode") if isinstance(model_info, dict) else None)  # mlx-dspark: _dflash_ / _dspark_
     prefix = slug(info.get("kind") or "generic") + ("-" + slug(info["version"]) if info.get("version") else "")
@@ -217,6 +217,8 @@ def default_path(states_dir, info, model, suite, when=None, request=None, dev=No
         sampling += "_t%s" % slug("%g" % request["temperature"])
     if request.get("reasoning_effort") is not None:
         sampling += "_e-%s" % slug(request["reasoning_effort"])
+    if request.get("thinking") is not None:
+        sampling += "_think-%s" % slug(request["thinking"])
     if note:
         sampling += "_%s" % slug(note).lower()
     short = device.short(dev.get("name")) if dev else None

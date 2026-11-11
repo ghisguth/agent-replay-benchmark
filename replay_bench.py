@@ -259,6 +259,8 @@ def build_parser():
                    help="Send no temperature field (server default applies)\ndefault for replay suites\nnot with: --temperature")
     g.add_argument("--reasoning-effort", metavar="LEVEL", dest="reasoning_effort", default=None,
                    help="reasoning_effort to send (e.g. low, medium, high)\ndefault: no field sent")
+    g.add_argument("--thinking", choices=["on", "off"], default=None,
+                   help="on/off sets chat_template_kwargs.enable_thinking (llama.cpp, vLLM, SGLang, Splash)\ndefault: as recorded")
 
     g = parser.add_argument_group("State files & resume")
     g.add_argument("--state-file", metavar="FILE", dest="state_file",
@@ -405,6 +407,7 @@ def _main(argv=None):
         mdcat=not args.no_mdcat,
         warmup_first_test=args.warmup_first_test,
         reasoning_effort=args.reasoning_effort,
+        thinking=args.thinking,
         temperature=temperature,
         replay=replay,
         preset=preset,

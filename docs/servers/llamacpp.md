@@ -22,6 +22,7 @@ again without it, and progress is off for the rest of the run. `--no-prompt-prog
 - `-fa on`: flash attention (older builds take plain `-fa`: check your version).
 - `--cache-reuse N` and the default prompt cache: a replay appends to the previous prompt, so reuse decides the
   prefill cost. Check your version for the exact defaults.
+- `--thinking on|off` sends `chat_template_kwargs.enable_thinking` (replay requests record it as true).
 - `--reasoning-format`, `--reasoning-budget`: how thinking is returned and capped (check your version).
 
 ```bash

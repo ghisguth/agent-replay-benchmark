@@ -151,10 +151,11 @@ def make_case(fixture, pos, entry):
     }
 
 
-def build_payload(case, model_name, reasoning_effort=None, temperature=None):
+def build_payload(case, model_name, reasoning_effort=None, temperature=None, thinking=None):
     """The request body of a replay case: the recorded params and messages, model swapped for the target's.
 
     Nothing is added to what omp sent (no max_tokens); reasoning_effort and temperature only when given.
+    thinking (True/False) sets enable_thinking in a copy of the recorded chat_template_kwargs.
     """
     entry = case["entry"]
     pool = case["fixture"]["messages"]
@@ -165,6 +166,8 @@ def build_payload(case, model_name, reasoning_effort=None, temperature=None):
         payload["tools"] = entry["tools"]
     if reasoning_effort is not None:
         payload["reasoning_effort"] = reasoning_effort
+    if thinking is not None:
+        payload["chat_template_kwargs"] = dict(payload.get("chat_template_kwargs") or {}, enable_thinking=thinking)
     if temperature is not None:
         payload["temperature"] = temperature
     return payload

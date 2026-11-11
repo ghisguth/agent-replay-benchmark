@@ -25,6 +25,7 @@ from test_replay import synthetic_fixture, write_fixture  # noqa: E402
 
 import replay_bench  # noqa: E402
 from bench import baseline, compare, state  # noqa: E402
+from bench import results as R  # noqa: E402
 from bench.display import display_state  # noqa: E402
 from bench.utils import UserError  # noqa: E402
 
@@ -184,11 +185,23 @@ class Format(unittest.TestCase):
         self.assertEqual((h["type"], h["schema"], h["suite"], h["model"], h["n_ctx"]), ("run", 1, "smoke", "m", 4096))
         self.assertEqual(h["endpoint"], "http://h:1/v1")
         self.assertEqual(h["server"]["version"], "1a2b3c4d")
-        self.assertEqual(h["request"], {"temperature": 0.0, "reasoning_effort": None})
+        self.assertEqual(h["request"], {"temperature": 0.0, "reasoning_effort": None, "thinking": None})
         self.assertEqual(h["argv"], ["--suite", "smoke"])
         self.assertRegex(h["started_at"], r"^\d{4}-\d\d-\d\dT")
         self.assertIsNone(h["fixture"])
         self.assertEqual(lines(self.path)[-1]["counts"], {"PASS": 3})
+
+    def test_old_header_without_thinking_loads(self):
+        self.write()
+        recs = lines(self.path)
+        del recs[0]["request"]["reasoning_effort"]  # an older header
+        with open(self.path, "w") as f:
+            f.write("".join(json.dumps(r) + "\n" for r in recs))
+        raw, keys = state.load_state(self.path)
+        self.assertEqual(sorted(raw[keys[0]["key"]]), ["C00", "C01", "C02"])
+        self.assertIsNone(lines(self.path)[0]["request"].get("thinking"))
+        self.assertEqual(R.sampling_text(lines(self.path)[0]["request"]), "temperature 0.0, reasoning effort none sent")
+        self.assertIn("thinking off", R.sampling_text({"thinking": "off"}))
 
     def test_crash_keeps_everything_so_far(self):
         self.write(end=False)
@@ -239,6 +252,10 @@ class Format(unittest.TestCase):
         open(p, "w").close()
         p3 = state.default_path("states", TARGET["backend_info"], "m", "coding", when, {"temperature": 0.6, "reasoning_effort": "low"})
         self.assertRegex(p3, r"splash-1a2b3c4d_m_coding_t0\.6_e-low_\d{8}-\d{6}\.jsonl$")
+        p5 = state.default_path("states", TARGET["backend_info"], "m", "coding", when,
+                                {"temperature": 0.6, "reasoning_effort": "low", "thinking": "off"})
+        self.assertRegex(p5, r"_coding_t0\.6_e-low_think-off_\d{8}-\d{6}\.jsonl$")
+        self.assertIn("_think-on_", state.default_path("states", TARGET["backend_info"], "m", "coding", when, {"thinking": "on"}))
         p4 = state.default_path("states", TARGET["backend_info"], "m", "coding", when, {"temperature": 0.0})
         self.assertIn("_coding_t0_", p4)  # greedy is given, so it is named
         p2 = state.default_path(self.tmp.name, {"kind": "generic", "version": None}, "m", "smoke", when)
@@ -296,7 +313,7 @@ class EndToEnd(unittest.TestCase):
         h, results, end = recs[0], recs[1:-1], recs[-1]
         self.assertEqual((h["type"], h["suite"], h["model"], h["endpoint"]), ("run", "coding", "m", srv.url))
         self.assertEqual(h["server"]["kind"], "splash")
-        self.assertEqual(h["request"], {"temperature": 0.5, "reasoning_effort": None})
+        self.assertEqual(h["request"], {"temperature": 0.5, "reasoning_effort": None, "thinking": None})
         self.assertEqual(h["fixture"]["file"], "fx.json.gz")
         self.assertRegex(h["fixture"]["sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(h["selection"]["turns"], None)
