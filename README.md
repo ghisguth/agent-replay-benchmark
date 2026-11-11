@@ -191,7 +191,7 @@ python3 replay_bench.py --endpoint http://localhost:8080/v1 --temperature 0.6 --
 
 ### How comparison works
 
-- **File resolution**: A path passed to `--state` or `--compare-state` is used as given; a name is looked up in `states/`, `fixtures/refs/` and `fixtures/samples/`.
+- **File resolution**: A path passed to `--state` or `--compare-state` is used as given; a name is looked up in the states folder, `./states` (when it differs), `fixtures/refs/` and `fixtures/samples/`.
 - **Baseline matching**: The baseline state must match the candidate run's suite and fixture SHA-256 digest.
 - **Common cases**: Comparison evaluates the intersection of cases present in both files.
 - **Delta columns**:
@@ -437,7 +437,13 @@ Baseline: Splash 1.6.0-m1 · unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_M.
 
 ## State files and resume
 
-Runs are automatically persisted to JSONL state files in `states/`. Each line is appended, flushed, and `fsync`ed immediately after each case finishes.
+Runs are automatically persisted to JSONL state files in the states folder. Each line is appended, flushed, and `fsync`ed immediately after each case finishes.
+
+Where that folder is: the checkout's `states/` when you run from a source checkout; when installed (pipx/pip),
+`$XDG_DATA_HOME/replay-bench/states` (default `~/.local/share/replay-bench/states`, also on macOS) or
+`%LOCALAPPDATA%\replay-bench\states` on Windows. `REPLAY_BENCH_STATES_DIR` overrides both. The folder is created with the
+first run; `--help` and `--discover` show the active one, and the end-of-run `state:` line shows the file. Runs saved
+by 0.1.0 under `./states` are still found by `--state NAME` from that directory.
 
 ### Naming convention
 
@@ -545,7 +551,7 @@ python3 replay_bench.py --state states/my_run.jsonl --compare-state coding-quick
 ```
 
 A name given to `--state` or `--compare-state` is a path, a file name or a unique substring of one, searched in
-`states/`, then `fixtures/refs/`, then `fixtures/samples/`. An ambiguous name lists the matches, an unknown one suggests
+the states folder, then `./states` (when it differs), `fixtures/refs/`, `fixtures/samples/`. An ambiguous name lists the matches, an unknown one suggests
 the closest names.
 
 ### Tools

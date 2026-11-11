@@ -90,11 +90,23 @@ def _show(v):
     return "none" if v is None or v == [] else ("[%s]" % ", ".join(map(str, v)) if isinstance(v, list) else str(v))
 
 
+def _search_dirs(states_dir, refs_dir, samples_dir):
+    """The folders a state name is looked up in, in order: the states folder, ./states (runs saved by 0.1.0 when
+    installed) when it differs, fixtures/refs, fixtures/samples."""
+    dirs = [states_dir]
+    legacy = paths.legacy_states_dir()
+    if legacy and os.path.abspath(legacy) != os.path.abspath(states_dir):
+        dirs.append(legacy)
+    dirs += [refs_dir, samples_dir]
+    return dirs
+
+
 def resolve_state(path, states_dir=None, refs_dir=None, samples_dir=None):
-    """A state file given by name: as is when it exists, else looked up in states/, fixtures/refs/ and then
-    fixtures/samples/ (a bare file name, or a path relative to any); else a unique substring (so also prefix) of one
-    name among states/*.jsonl, fixtures/refs/*.jsonl and fixtures/samples/*.jsonl (a symlink and its target count
-    once). Several matches: a UserError listing them; none: a UserError that points at the closest names. Symlinks are followed."""
+    """A state file given by name: as is when it exists, else looked up in the states folder, ./states (when it
+    differs), fixtures/refs and then fixtures/samples (a bare file name, or a path relative to any); else a unique
+    substring (so also prefix) of one name among the *.jsonl files there (a symlink and its target count once).
+    Several matches: a UserError listing them; none: a UserError that lists the folders searched and points at the
+    closest names. Symlinks are followed."""
     if os.path.exists(path):
         return path
     if states_dir is None:
@@ -103,12 +115,12 @@ def resolve_state(path, states_dir=None, refs_dir=None, samples_dir=None):
         refs_dir = paths.REFS_DIR
     if samples_dir is None:
         samples_dir = paths.SAMPLES_DIR
-    dirs = (states_dir, refs_dir, samples_dir)
+    dirs = _search_dirs(states_dir, refs_dir, samples_dir)
     for d in dirs:
         cand = os.path.join(d, path)
         if os.path.isfile(cand):
             return cand
-    found = {}  # realpath -> path, states/ first
+    found = {}  # realpath -> path, in search order
     for d in dirs:
         for n in sorted(os.listdir(d)) if os.path.isdir(d) else []:
             full = os.path.join(d, n)
@@ -118,11 +130,12 @@ def resolve_state(path, states_dir=None, refs_dir=None, samples_dir=None):
         return next(iter(found.values()))
     if found:
         raise UserError("state name %r is ambiguous, it matches:\n  %s" % (path, "\n  ".join(
-            os.path.relpath(p, paths.ROOT) if p.startswith(paths.ROOT + os.sep) else p for p in found.values())))
+            os.path.relpath(p, paths.ROOT) if p.startswith(paths.ROOT + os.sep) else paths.tilde(p) for p in found.values())))
     names = sorted({n for d in dirs if os.path.isdir(d) for n in os.listdir(d)})
     near = suggest_names(os.path.basename(path), names)
     hint = " (did you mean %s?)" % " or ".join(near) if near else ""
-    raise UserError("state file not found: %s%s" % (path, hint))
+    raise UserError("state file not found: %s%s (searched: %s)" % (path, hint, ", ".join(
+        os.path.relpath(d, paths.ROOT) if d.startswith(paths.ROOT + os.sep) else paths.tilde(d) for d in dirs)))
 
 
 def _tokens(text):

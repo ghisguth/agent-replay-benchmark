@@ -76,9 +76,9 @@ REPO = paths.ROOT
 
 
 def rel_path(path):
-    """A path relative to the repository when it is inside it (states/x.jsonl), else as given."""
+    """A path relative to the repository when it is inside it (states/x.jsonl), else as given with home shown as ~."""
     ap = os.path.abspath(path)
-    return os.path.relpath(ap, REPO) if ap.startswith(REPO + os.sep) else str(path)
+    return os.path.relpath(ap, REPO) if ap.startswith(REPO + os.sep) else paths.tilde(path)
 
 
 def current_format():

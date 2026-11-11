@@ -146,7 +146,7 @@ Examples:
   Quick sanity check of a server, four small generic cases:
     replay_bench.py --suite smoke --endpoint http://localhost:8080/v1
 
-  The default (--preset large: main agent up to 128k) against llama.cpp, state saved to states/:
+  The default (--preset large: main agent up to 128k) against llama.cpp, state saved to states:
     replay_bench.py --endpoint http://localhost:8080/v1
 
   A router serving several models: pick by substring (case-insensitive), or take the first:
@@ -196,6 +196,10 @@ def build_epilog():
         "                            given up as stalled (default 300)\n"
         "    REPLAY_BENCH_SERVER_WAIT  Seconds to wait for a vanished server per retry (default 900)\n"
         "    REPLAY_BENCH_NERD_FONT  1 to enable Nerd Font icons (same as --icons; 0 forces them off)\n"
+        "    REPLAY_BENCH_STATES_DIR  Folder for saved runs (default: the checkout's states/ when run from a\n"
+        "                            checkout, else $XDG_DATA_HOME/replay-bench/states or\n"
+        "                            ~/.local/share/replay-bench/states; LOCALAPPDATA on Windows)\n"
+        "  Saved runs: states: " + paths.tilde(paths.user_states_dir()) + "\n"
         "  Exit codes: 0 done, 2 usage or input error, 1 unexpected error, or --list found no model.\n"
         "  Docs: README.md and docs/capture-traces.md."
     )
@@ -264,20 +268,20 @@ def build_parser():
 
     g = parser.add_argument_group("State files & resume")
     g.add_argument("--state-file", metavar="FILE", dest="state_file",
-                   help="Save results to FILE instead of the automatic path in states/\nnot with: --state, --no-save-state, --resume\n(see README, State files)")
+                   help="Save results to FILE instead of the automatic path in the states folder (REPLAY_BENCH_STATES_DIR)\nnot with: --state, --no-save-state, --resume\n(see README, State files)")
     g.add_argument("--no-save-state", action="store_true", dest="no_save_state",
-                   help="Do not save a state file (a live run saves under states/ otherwise)\nnot with: --state-file, --resume")
+                   help="Do not save a state file (a live run saves in the states folder otherwise)\nnot with: --state-file, --resume")
     g.add_argument("--state", metavar="FILE", dest="load_state", action="append",
-                   help="Show one saved run again without sending anything (schema 1 JSONL); FILE is a path or a name (substring) in states/, fixtures/refs/ or fixtures/samples/\nnot with: --state-file, --no-save-state, --resume\n(see README, Comparing runs)")
+                   help="Show one saved run again without sending anything (schema 1 JSONL); FILE is a path or a name (substring) in the states folder, fixtures/refs/ or fixtures/samples/\nnot with: --state-file, --no-save-state, --resume\n(see README, Comparing runs)")
     g.add_argument("--resume", metavar="FILE",
                    help="Continue an interrupted run from its state file\nnot with: --state, --state-file, --no-save-state, --compare-state, --reference, --dry-run, --list\n(see README, State files)")
 
     g = parser.add_argument_group("Comparison")
     g.add_argument("--compare-state", metavar="FILE", dest="compare_state",
-                   help="Compare this run with a saved baseline run FILE (a path or a name in states/, fixtures/refs/ or fixtures/samples/)\nnot with: --resume, --report-format chat, chat-compact (tabular)\n(see README, Comparing runs)")
+                   help="Compare this run with a saved baseline run FILE (a path or a name in the states folder, fixtures/refs/ or fixtures/samples/)\nnot with: --resume, --report-format chat, chat-compact (tabular)\n(see README, Comparing runs)")
 
     g.add_argument("--reference", metavar="FILE", dest="reference",
-                   help="Judge every answer against this saved run FILE (a path or a name in states/, fixtures/refs/ or fixtures/samples/) instead of the recording: PASS where the answer matches the reference's at that request (see --match), WARN with the first difference otherwise; broken answers stay FAIL. Adds a `vs reference` line and the agreement rows to Metrics. With --state it judges the saved run, and the --compare-state baseline too\nsame suite and fixture as the run; replay suites only\nnot with: --resume\n(see README, Comparing quants against one reference)")
+                   help="Judge every answer against this saved run FILE (a path or a name in the states folder, fixtures/refs/ or fixtures/samples/) instead of the recording: PASS where the answer matches the reference's at that request (see --match), WARN with the first difference otherwise; broken answers stay FAIL. Adds a `vs reference` line and the agreement rows to Metrics. With --state it judges the saved run, and the --compare-state baseline too\nsame suite and fixture as the run; replay suites only\nnot with: --resume\n(see README, Comparing quants against one reference)")
     g.add_argument("--match", choices=reference.MATCHES, default=None, metavar="RULE",
                    help="What counts as the same answer as the reference's\n  step   the same kind of first step (look, change, ...) (default)\n  targets  the same tools in the same order on the same targets: read/write/edit the file (line range ignored), bash the set of programs, grep/find/glob/ls the path\n  calls  the same tool calls in the same order with the same arguments (the intent argument i ignored), the same text after whitespace normalisation\n  exact  as calls, with i and the exact text; reasoning text is not stored, so it is not compared\nwith: --reference (sampling noise dominates unless both runs use --temperature 0)")
 
@@ -374,6 +378,7 @@ def _main(argv=None):
 
     report.configure(args.report_format)
     if args.list:
+        print(f"states: {paths.tilde(STATES_DIR)}")
         targets = discover_and_report(endpoints, args.model, spinner=ProgressAnimation(), first_model=args.first_model)
         if not targets:
             print(f"{Clr.BYEL}No reachable models matched the current selection.{Clr.RST}")

@@ -10,7 +10,7 @@ import traceback
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
-from . import backend, perf, report
+from . import backend, paths, perf, report
 from . import fmt as F
 from . import reference as reference_mod
 from . import results as R
@@ -439,7 +439,7 @@ def _select_cases(mode, target_test_ids, replay, out):
 
 def run_benchmark(mode, target_test_ids=None,
                   endpoints=None, model_filters=None, first_model=False,
-                  state_file=None, save_state=True, states_dir="states", cmdline=None,
+                  state_file=None, save_state=True, states_dir=None, cmdline=None,
                   compare_state_path=None, load_state_path=None,
                   warmup_first_test=False, reasoning_effort=None, temperature=None, thinking=None,
                   mdcat=True, replay=None, report_format="tui", prompt_progress=True, resume=None,
@@ -507,7 +507,7 @@ def run_benchmark(mode, target_test_ids=None,
         resume=_resume_plan(resume, mode, replay, targets, test_cases) if resume else None, baseline=baseline,
         reference=reference, infos={t["key"]: i for t, i in zip(targets, infos)}, replay=replay, preset=preset, run_note=run_note,
         selection=selection, request_settings=request_settings, cmdline=cmdline, run_started=datetime.now(),
-        save_state=save_state, state_file=state_file, states_dir=states_dir, reasoning_effort=reasoning_effort, thinking=thinking,
+        save_state=save_state, state_file=state_file, states_dir=states_dir or paths.default_states_dir(), reasoning_effort=reasoning_effort, thinking=thinking,
         temperature=temperature, warmup_first_test=warmup_first_test, mdcat=mdcat,
         targets=[], raw_results={}, state_paths=[], base_runs={}, n_targets=len(targets))
 
